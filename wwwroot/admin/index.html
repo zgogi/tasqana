@@ -19,6 +19,7 @@
             updateUsers() { this._updateTable(table_users, "/admin/users"); }
             updateSessions() { this._updateTable(table_sessions, "/admin/sessions"); }
             updateTodos() { this._updateTable(table_todos, "/admin/todos"); }
+            updateMessages() { this._updateTable(table_messages, "/admin/messages"); }
 
             _updateTable(table, path) {
                 this.api.get(path)
@@ -60,6 +61,14 @@
             { title: "Created", id: "created_at" },
             { title: "Modified", id: "modified_at" },
         ]);
+
+        var table_messages = new Table("table", [
+            { title: "User", id: "user" },
+            { title: "Text", id: "text" },
+            { title: "Incoming", id: "is_incoming" },
+            { title: "Created", id: "created_at" },
+
+        ]);
     </script>
 </head>
 <body class="w3-theme-d5">
@@ -74,6 +83,7 @@
         <div id="menu-users" class="w3-bar-item w3-btn">Users</div>
         <div id="menu-sessions" class="w3-bar-item w3-btn">Sessions</div>
         <div id="menu-todos" class="w3-bar-item w3-btn">ToDo's</div>
+        <div id="menu-messages" class="w3-bar-item w3-btn">Messages</div>
     </div>
     <div style="margin-left:200px" class="w3-padding">
         <table id="table" class="w3-table w3-bordered w3-border w3-hoverable" style="width:100%;">
@@ -93,6 +103,9 @@
             });
             document.getElementById("menu-todos").addEventListener("click", () => {
                 admin_panel.updateTodos();
+            });
+            document.getElementById("menu-messages").addEventListener("click", () => {
+                admin_panel.updateMessages();
             });
 
 

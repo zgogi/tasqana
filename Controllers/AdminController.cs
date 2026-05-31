@@ -10,18 +10,21 @@ namespace WebApi.Controllers
         private readonly CategoriesService _categories;
         private readonly UsersService _users;
         private readonly TodosService _todos;
+        private readonly TelegramService _telegram;
         public AdminController(
             SessionsService sessions,
             ILogger<CategoriesController> logger,
             CategoriesService categories,
             UsersService users,
-            TodosService todos
+            TodosService todos,
+            TelegramService telegram
             ) : base(sessions)
         {
             _logger = logger;
             _categories = categories;
             _users = users;
             _todos = todos;
+            _telegram = telegram;
         }
 
         [HttpGet, Route("users")]
@@ -52,6 +55,16 @@ namespace WebApi.Controllers
                 if (!user.IsAdmin) return Unauthorized();
                 var result = await _todos.GetAllAsync();
                 return Ok(result.Select(e => new Models.http.TodoExtDTO(e)));
+            });
+        }
+
+        [HttpGet, Route("messages")]
+        public async Task<ActionResult> GetMessages()
+        {
+            return await WithAuthenticationAsync(async user => {
+                if (!user.IsAdmin) return Unauthorized();
+                var result = await _telegram.GetAllAsync();
+                return Ok(result.Select(e => new Models.http.TelegramMessageDTO(e)));
             });
         }
     }

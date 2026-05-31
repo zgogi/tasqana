@@ -1,7 +1,26 @@
-﻿using static WebApi.Models.http.Telegram;
+﻿using System.Security.Permissions;
+using WebApi.Extensions;
+using static WebApi.Models.http.Telegram;
 
 namespace WebApi.Models.http
 {
+
+    public class TelegramMessageDTO
+    {
+        public long id {  get; set; }
+        public string? text { get; set; }
+        public DateTime created_at { get; set; }
+        public bool is_incoming { get; set; }
+        public string user { get; set; } = null!;
+
+        public TelegramMessageDTO(Models.TelegramMessage message) { 
+            id = message.Id;
+            text = message.Text;
+            created_at = message.CreatedAt;
+            is_incoming = message.IsIncoming;
+            user = message.User.Name.ToTelegramUsername();
+        }
+    }
     public class Telegram
     {
         public class Response

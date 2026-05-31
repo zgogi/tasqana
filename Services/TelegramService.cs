@@ -31,6 +31,11 @@ namespace WebApi.Services
             _dns = config.SingleOrDefault(e => e.Key == "Dns")?.Value ?? "";
         }
 
+        public async Task<List<Models.TelegramMessage>> GetAllAsync()
+        {
+            return await _telegram.GetAllAsync();
+        }
+
         public async Task<Models.User?> GetOrCreateUserAsync(Models.http.Telegram.Message message)
         {
             if (message.from == null) return null;

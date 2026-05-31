@@ -22,7 +22,7 @@ namespace WebApi.Repositories
 
         public async Task<int> CountAsync() { return await Entities.CountAsync(); }
 
-        public async Task<List<T>> GetAllAsync(bool asNoTracking = false)
+        public virtual async Task<List<T>> GetAllAsync(bool asNoTracking = false)
         {
             var entities = await Query(asNoTracking)
                 .ToListAsync();
