@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="/js/api.js"></script>
+    <script src="/js/html.js"></script>
+    <script src="/js/table.js"></script>
+    <script>
+        class AdminPanel {
+            constructor(api) {
+                this.api = api;
+            }
+
+            updateUsers() { this._updateTable(table_users, "/admin/users"); }
+            updateSessions() { this._updateTable(table_sessions, "/admin/sessions"); }
+            updateTodos() { this._updateTable(table_todos, "/admin/todos"); }
+
+            _updateTable(table, path) {
+                this.api.get(path)
+                    .then(data => {
+                        table.rebuild(data);
+                    })
+                    .catch(error => {
+                        html.showError(error.message);
+                    });
+            }
+
+
+        }
+        
+
+
+        var table_users = new Table("table", [
+            { title: "Name", id: "user_name" },
+            { title: "Telegram user", id: "tg_name" },
+            { title: "Telegram ID", id: "tg_id" },
+            { title: "Created at", id: "created_at" },
+            { title: "Modified at", id: "modified_at" }
+        ]);
+
+        var table_sessions = new Table("table", [
+            { title: "Name", id: "user_name" },
+            { title: "Telegram user", id: "tg_name" },
+            { title: "Created at", id: "created_at" },
+            { title: "Expired at", id: "expired_at" }
+        ]);
+
+        var table_todos = new Table("table", [
+            { title: "User", id: "user_name" },
+            { title: "Category", id: "category" },
+            { title: "Title", id: "title" },
+            { title: "Description", id: "description" },
+            { title: "State", id: "state" },
+            { title: "Priority", id: "priority" },
+            { title: "Created", id: "created_at" },
+            { title: "Modified", id: "modified_at" },
+        ]);
+    </script>
+</head>
+<body class="w3-theme-d5">
+    <div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
+        <i class="fa fa-close w3-right w3-padding w3-btn" onclick='html.hideError();'></i>
+        <p id="error-content" class="w3-padding"></p>
+    </div>
+    <div class="w3-sidebar w3-bar-block w3-theme-d4" style="width:200px">
+        <div class="w3-bar-item w3-btn">
+            <a href="/" class="fa fa-chevron-circle-left w3-xxlarge" style="text-decoration:none;"></a>
+        </div>
+        <div id="menu-users" class="w3-bar-item w3-btn">Users</div>
+        <div id="menu-sessions" class="w3-bar-item w3-btn">Sessions</div>
+        <div id="menu-todos" class="w3-bar-item w3-btn">ToDo's</div>
+    </div>
+    <div style="margin-left:200px" class="w3-padding">
+        <table id="table" class="w3-table w3-bordered w3-border w3-hoverable" style="width:100%;">
+        </table>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const api = new Api();
+            var admin_panel = new AdminPanel(api);
+            admin_panel.updateUsers();
+
+            document.getElementById("menu-users").addEventListener("click", () => {
+                admin_panel.updateUsers();
+            });
+            document.getElementById("menu-sessions").addEventListener("click", () => {
+                admin_panel.updateSessions();
+            });
+            document.getElementById("menu-todos").addEventListener("click", () => {
+                admin_panel.updateTodos();
+            });
+
+
+        });
+
+
+
+    </script>
+
+</body>
+</html>

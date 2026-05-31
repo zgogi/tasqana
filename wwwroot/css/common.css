@@ -1,0 +1,28 @@
+﻿* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.z-flex-grow {
+    flex-grow: 1;
+}
+
+.z-width-100 {
+    width: 100%;
+}
+
+.z-padding-left {
+    padding-left: 16px;
+}
+
+.z-clickable {
+    cursor: pointer;
+}
+
+.drop-target {
+    background-color: #0094ff;
+}
+
+.category-title.selected {
+    color: yellow;
+}

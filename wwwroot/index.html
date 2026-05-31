@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/css/common.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="/js/api.js"></script>
+	<script src="/js/html.js"></script>
+	<script src="/js/appstore.js"></script>
+	<script src="/js/categories.js"></script>
+	<script src="/js/todos.js"></script>
+	<script src="/js/dragndrop.js"></script>
+	<script src="/js/modal.js"></script>
+</head>
+<body class="w3-theme-d5">
+	<div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
+		<i class="fa fa-close w3-right w3-padding w3-btn" onclick='html.hideError();'></i>
+		<p id="error-content" class="w3-padding"></p>
+	</div>
+	<div class="w3-flex" style="width:100%;">
+		<div style="flex-grow:1;"><h3 class="w3-margin-left">Tas<span style="color:yellow;">Q</span>ana</h3></div>
+		<div id="btn-admin" class="w3-hide w3-padding"><a href="/admin">Admin</a></div>
+		<div class="w3-padding">Hi, <span id="user-name"></span></div>
+	</div>
+	<div class="w3-grid w3-margin" style="gap: 16px; grid-template-columns: repeat(4, 1fr); ">
+		<div id="categories-block" class="w3-card-4 w3-padding w3-round-xlarge">
+			<div class="w3-flex">
+				<h3 class="z-flex-grow">
+					Categories
+					<i id="btn-cat-add" class="fa fa-plus-circle w3-right w3-btn"></i>
+				</h3>
+			</div>
+			<div id="categories-list" class=""></div>
+			<hr />
+			<div id="btn-cat-unsorted" class="w3-btn">[Unsorted]</div>
+		</div>
+		<div id="block-todos" class="w3-card-4 w3-padding w3-round-xlarge">
+			<h3 class="title">
+				<span id="todos-title"></span>
+				<i id="btn-todo-add" class="fa fa-plus-circle w3-right w3-btn"></i>
+			</h3>
+			<div id="todos-list"></div>
+
+		</div>
+	</div>
+	<div id="form-cat-create" class="w3-modal">
+		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
+			<div class="w3-container">
+				<h2>Create category</h2>
+				<label>Enter category name</label>
+				<input class="value-title w3-input" type="text" />
+				<div class="w3-flex w3-margin">
+					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-cancel w3-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="form-cat-edit" class="w3-modal">
+		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
+			<div class="w3-container">
+				<h2>Category</h2>
+				<label>Enter category name</label>
+				<input class="value-title w3-input" type="text" />
+				<div class="w3-flex w3-margin">
+					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-cancel w3-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="form-cat-delete" class="w3-modal">
+		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
+			<div class="w3-container">
+				<h2>Delete category?</h2>
+				<div class="w3-flex w3-margin">
+					<button class="btn-confirm w3-btn w3-red">Delete</button>
+					<button class="btn-cancel w3-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="form-todo-create" class="w3-modal">
+		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
+			<div class="w3-container">
+				<h2>Create task</h2>
+				<label>Task name</label>
+				<input class="value-title w3-input" type="text" />
+				<label>Task name</label>
+				<textarea class="value-description w3-input"></textarea>
+				<div class="w3-flex w3-margin">
+					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-cancel w3-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="form-todo-edit" class="w3-modal">
+		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
+			<div class="w3-container">
+				<h2>Task</h2>
+				<label>Task name</label>
+				<input class="value-title w3-input" type="text" />
+				<label>Task name</label>
+				<textarea class="value-description w3-input"></textarea>
+				<div class="w3-flex w3-margin">
+					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-cancel w3-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="form-todo-delete" class="w3-modal">
+		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
+			<div class="w3-container">
+				<h2>Delete task?</h2>
+				<div class="w3-flex w3-margin">
+					<button class="btn-confirm w3-btn w3-red">Delete</button>
+					<button class="btn-cancel w3-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const api = new Api();
+			const store = new AppStore(api);
+			const categoriesView = new CategoriesView(store, document.getElementById("categories-list"));
+			const todosView = new TodosView(store, document.getElementById("todos-title"), document.getElementById("todos-list"));
+			const categoryCreate = new CategoryCreateModalDialog(store, document.getElementById("form-cat-create"));
+			const categoryEdit = new CategoryEditModalDialog(store, document.getElementById("form-cat-edit"));
+			const categoryDelete = new CategoryDeleteModalDialog(store, document.getElementById("form-cat-delete"));
+			const todoCreate = new TodoCreateModalDialog(store, document.getElementById("form-todo-create"));
+			const todoEdit = new TodoEditModalDialog(store, document.getElementById("form-todo-edit"));
+			const todoDelete = new TodoDeleteModalDialog(store, document.getElementById("form-todo-delete"));
+			const dragndrop = new DragNDrop(store);
+			store.update();
+			store.user.autoUpdate();
+
+			document.addEventListener('click', function (event) {
+				subsribeTo(event, ".category-title", node => { store.categories.select(node.dataset.id); });
+				subsribeTo(event, "[data-command]", node => { store.executeCommand(node.dataset.command, node.dataset.id); });
+			});
+
+			document.getElementById("btn-cat-unsorted").addEventListener("click", function () {
+				store.categories.select(null);
+			});
+
+			document.getElementById("btn-cat-add").addEventListener("click", function () {
+				store.executeCommand("category-create", null);
+			});
+
+			document.getElementById("btn-todo-add").addEventListener("click", function () {
+				store.executeCommand("todo-create", store.categories.selected?.id);
+			});
+
+            document.addEventListener("dragstart", function (event) {
+                dragndrop.onStart(event.target);
+            });
+
+            document.addEventListener("dragover", function (event) {
+                if (dragndrop.onEnter(event.target))
+                    event.preventDefault();
+            });
+
+            document.addEventListener("dragleave", function (event) {
+                dragndrop.onLeave(event.target);
+            });
+
+            document.addEventListener("dragend", function (event) {
+                dragndrop.onEnd(event.target);
+			});
+
+			if (store.user.is_admin)
+				document.getElementById("btn-admin").classList.remove("w3-hide");
+			document.getElementById("user-name").innerText = store.user.name;
+		});
+
+
+
+		function subsribeTo(event, filter, onEvent) {
+			const node = event.target.closest(filter);
+			if (node == null) return;
+			onEvent(event.target);
+		}
+
+		document.addEventListener('click', function (event) {
+			html.processDropDown(event);
+			html.processAccordion(event);
+		});
+
+		
+
+
+	</script>
+</body>
+</html>

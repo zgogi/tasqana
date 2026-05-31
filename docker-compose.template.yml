@@ -1,0 +1,38 @@
+﻿
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: MyVerySecretPassword
+      POSTGRES_DB: my_db
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  webapi:
+    build:
+      context: . 
+      dockerfile: Dockerfile     
+    restart: always
+    ports:
+      - "127.0.0.1:5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - PostgresConnectionData__Host=db 
+      - PostgresConnectionData__Port=5432
+      - PostgresConnectionData__Database=my_db
+      - PostgresConnectionData__Username=my_user
+      - PostgresConnectionData__Password=MyVerySecretPassword
+      - PostgresConnectionData__IncludeErrorDetail=true
+      - PostgresConnectionData__CommandTimeout=120
+      - Telegram__BotToken=00000000:AAAAA_bbbbbbbbbbbb-ccccccccccccccccc  
+      - Telegram__WebhookSecret=aaaaaabbbbbbbbbbbbbccccccccccccccdddddddddd
+      - Host__Dns=example.com   
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

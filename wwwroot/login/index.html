@@ -1,0 +1,38 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
+    <script src="../js/api.js"></script>
+    <script src="../js/appstore.js"></script>
+</head>
+<body class="w3-theme-d5">
+<div style="width:100%; height:100%;">
+	<div class="w3-display-middle">Проверка ключа</div>
+</div>
+<script>
+
+function readUrlValue(name) {
+    const qs = window.location.search;
+    const urlParams = new URLSearchParams(qs);
+    return urlParams.get(name);
+}
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const api = new Api();
+        const user = new UserStore(api);
+        const token = readUrlValue("token");
+        if ((token != null) && (token != "")) {
+            user.setToken(token);
+            user.update(function () { window.location.replace("/"); });
+        } else {
+            window.location.replace("/");
+        }
+});
+
+</script>
+</body>
+</html>
