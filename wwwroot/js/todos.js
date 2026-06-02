@@ -75,7 +75,7 @@ class TodosView {
 
 	_createCheckItem(item) {
 		const check = document.createElement("i");
-		check.className = (item.is_completed) ? "check-mark fa fa-toggle-on z-clickable" : "check-mark fa fa-toggle-off z-clickable";
+		check.className = (item.is_completed) ? "check-mark fa fa-check-square z-clickable" : "check-mark fa fa-check-square-o z-clickable";
 		check.dataset.id = item.id;
 
 		const text = document.createElement("span");
