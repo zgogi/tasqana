@@ -42,7 +42,18 @@ namespace Tasqana.Models.http
             public long message_id { get; set; }
             public long date { get; set; }
             public string? text { get; set; }
+            public string? caption { get; set; }
             public User? from { get; set; }
+
+            public Models.TelegramMessage ToMessage(long userId)
+            {
+                var result = new Models.TelegramMessage();
+                result.UserId = userId;
+                result.MessageId = this.message_id;
+                result.IsIncoming = true;
+                result.Text = this?.text ?? this?.caption ?? "";
+                return result;
+            }
         }
 
         public class User
@@ -109,39 +120,4 @@ namespace Tasqana.Models.http
 
 
 
-
-    /*
-
-    public class TelegramUpdate
-    {
-        public long update_id { get; set; }
-        public TelegramMessage? message { get; set; }
-
-    }
-
-    public class TelegramMessage
-    {
-        public long message_id { get; set; }
-        public long date { get; set; }
-        public string? text { get; set; }
-        public TelegramUser? from { get; set; }
-
-    }
-
-    public class TelegramUser
-    {
-        public long id { get; set; }
-        public string? first_name { get; set; }
-        public string? last_name { get; set; }
-        public string? username { get; set; }
-        
-    }
-
-    public class TelegramSendResponse
-    {
-        public bool ok { get; set; }
-        public TelegramMessage result { get; set; } = null!;
-
-        public TelegramSendResponse() { }
-    }*/
 }

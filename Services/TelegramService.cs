@@ -48,11 +48,7 @@ namespace Tasqana.Services
 
         public async Task<bool> ProcessMessageAsync(Models.User user, Models.http.Telegram.Message message, HttpContext http)
         {
-            var result = new Models.TelegramMessage();
-            result.UserId = user.Id;
-            result.MessageId = message.message_id;
-            result.IsIncoming = true;
-            result.Text = message?.text ?? "";
+            var result = message.ToMessage(user.Id);
             result = await _telegram.InsertAsync(result);
             result.User = user;
             return await ProcessMessageTextAsync(result, http);
