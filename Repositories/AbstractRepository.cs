@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using WebApi.Models;
 
 namespace WebApi.Repositories
@@ -45,13 +46,14 @@ namespace WebApi.Repositories
             await SaveChangesAsync();
             return entity;
         }
-        public async Task DeleteById(long id)
+        public async Task DeleteByIdAsync(long id)
         {
             await QueryById(id, false)
                 .ExecuteDeleteAsync();
         }
 
         public async Task SaveChangesAsync() { await Context.SaveChangesAsync(); }
+        
     }
 
 

@@ -18,12 +18,14 @@ builder.Services.AddScoped<SessionsRepository>();
 builder.Services.AddScoped<CategoriesRepository>();
 builder.Services.AddScoped<TodosRepository>();
 builder.Services.AddScoped<TelegramRepository>();
+builder.Services.AddScoped<CheckItemRepository>();
 
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<SessionsService>();
 builder.Services.AddScoped<CategoriesService>();
 builder.Services.AddScoped<TodosService>();
 builder.Services.AddScoped<TelegramService>();
+builder.Services.AddScoped<CheckItemService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

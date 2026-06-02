@@ -51,9 +51,14 @@ namespace WebApi.Services
                 .ToListAsync();
         }
 
-        public async Task<List<Models.Todo>> GetByCategoryAsync(Models.User user, long? categoryId)
+       // public async Task<Models.Todo> Insert(Models.User user, long id)
+       // {
+       //     return await _todos.GetByIdAsync(user, id);
+       // }
+        public async Task<IEnumerable<Models.http.TodoDTO>> GetByCategoryAsync(Models.User user, long? categoryId)
         {
-            return await _todos.GetByCategoryAsync(user, categoryId);
+            var result = await _todos.GetByCategoryAsync(user, categoryId);
+            return result.Select(e => new Models.http.TodoDTO(e));
         }
 
         public async Task DeleteAsync(Models.User user, long id)

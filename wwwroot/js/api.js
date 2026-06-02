@@ -36,6 +36,7 @@ class Api {
             return await response.json();
         } catch (error) {
             console.log(`API Error on ${path}:`, error);
+            html.showError(error);
             throw error; 
         }
     }

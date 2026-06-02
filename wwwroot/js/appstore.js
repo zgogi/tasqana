@@ -12,8 +12,6 @@ class CategoriesStore {
             .then(resp => {
                 this.items = resp;
                 this.parent.notify();
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
 
@@ -32,8 +30,6 @@ class CategoriesStore {
         this.api.post(`/categories/create`, data)
             .then(resp => {
                 this.update();
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
 
@@ -41,17 +37,14 @@ class CategoriesStore {
         this.api.post(`/categories/update`, data)
             .then(resp => {
                 this.update();
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
 
     delete(data) {
         this.api.post(`/categories/delete`, data)
             .then(resp => {
+                this.update();
                 this.select(null);
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
 
@@ -85,10 +78,10 @@ class TodosStore {
             .then(resp => {
                 this.items = resp;
                 this.parent.notify();
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
+
+
 
     get(id) {
         for (var i = 0; i < this.items.length; ++i) {
@@ -98,12 +91,21 @@ class TodosStore {
         return null;
     }
 
+    getCheckItem(id) {
+        for (var i = 0; i < this.items.length; ++i) {
+            const subitems = this.items[i].check_items;
+            for (var j = 0; j < subitems.length; ++j) {
+                if (subitems[j].id == id)
+                    return subitems[j];
+            }
+        }
+        return null;
+    }
+
     create(data) {
         this.api.post(`/todos/create`, data)
             .then(resp => {
                 this.parent.update();
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
 
@@ -111,8 +113,6 @@ class TodosStore {
         this.api.post(`/todos/update`, data)
             .then(resp => {
                 this.parent.update();
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
 
@@ -120,14 +120,40 @@ class TodosStore {
         this.api.post(`/todos/delete`, data)
             .then(resp => {
                 this.parent.update();
-            }).catch(error => {
-                html.showError(error.message);
             });
     }
 
     moveToCategory(itemId, categoryId) {
         this.save({ id: itemId, category_id: categoryId });
         this.parent.categories.select(categoryId);
+    }
+
+    checkItemToggle(checkId) {
+        this.api.post(`/todos/checklist/toggle`, { id:checkId })
+            .then(resp => {
+                this.parent.update();
+            });
+    }
+
+    checkItemCreate(todoId, title) {
+        this.api.post(`/todos/checklist/create`, { todo_id: todoId, title: title })
+            .then(resp => {
+                this.parent.update();
+            });
+    }
+
+    checkItemSave(id, title) {
+        this.api.post(`/todos/checklist/update`, { id: id, title:title })
+            .then(resp => {
+                this.parent.update();
+            });
+    }
+
+    checkItemDelete(id) {
+        this.api.post(`/todos/checklist/delete`, { id: id })
+            .then(resp => {
+                this.parent.update();
+            });
     }
 }
 
@@ -142,12 +168,7 @@ class UserStore {
         this.api.post('/users/token/update', {})
             .then(data => {
                 this._setUser(data);
-               // console.log("Token update succeded");
                 if (onSuccess != null) onSuccess();
-            })
-            .catch(error => {
-                //console.log("Token update failed", error);
-                this.logout();
             });
     }
 
@@ -206,7 +227,7 @@ class AppStore {
         this.categories = new CategoriesStore(this, api); 
         this.todos = new TodosStore(this, api);
         this.user = new UserStore(api);
-        this.editTarget = null; // Editing now
+        this.modal = null; // Editing now
         this._listeners = [];
     }
 
@@ -223,38 +244,14 @@ class AppStore {
         this.todos.update();
     }
 
-    executeCommand(command, id) {
-        if (command == "todo-complete") {
-            this.todos.save({ id: id, state: 2 });
-        } else {
-            this.editTarget = { command: command, id: id };
-            this.notify();
-        }
-    }
-
-    confirmEditing(data) {
-        if (data != null) {
-            if (data.command === "category-create")
-                this.categories.create(data);
-            else if (data.command === "category-edit")
-                this.categories.save(data);
-            else if (data.command === "category-delete")
-                this.categories.delete(data);
-            else if (data.command === "todo-create")
-                this.todos.create(data);
-            else if (data.command === "todo-edit")
-                this.todos.save(data);
-            else if (data.command === "todo-delete")
-                this.todos.delete(data);
-        }
-        this.editTarget = null;
+    startEdit(target) {
+        this.modal = target;
         this.notify();
     }
 
-    cancelEditing() {
-        this.editTarget = null;
-        this.notify();
-    }
+    
+
+
 
 
 }

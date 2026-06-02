@@ -12,7 +12,7 @@ namespace WebApi.Repositories
         public DbSet<Session> Sessions => Set<Session>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Todo> Todos => Set<Todo>();
-
+        public DbSet<CheckItem> todoListItems => Set<CheckItem>();
         public DbSet<TelegramMessage> TelegamMessages => Set<TelegramMessage>();
 
         private readonly IConfiguration _configuration;
@@ -87,6 +87,18 @@ namespace WebApi.Repositories
                 entity.HasOne(c => c.User)
                     .WithMany(c => c.Messages)
                     .HasForeignKey(c => c.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<CheckItem>(entity =>
+            {
+                entity.ToTable("todos_checkitems");
+                entity.HasKey(c => c.Id);
+              //  entity.HasIndex(c => c.TodoId);
+
+                entity.HasOne(c => c.Todo)
+                    .WithMany(c => c.CheckItems)
+                    .HasForeignKey(c => c.TodoId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }

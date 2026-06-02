@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
+using WebApi.Models.http;
 
 namespace WebApi.Repositories
 {
@@ -15,14 +16,16 @@ namespace WebApi.Repositories
                 .Where(c => c.UserId == user.Id 
                          && c.CategoryId == categoryId 
                          && c.State != TodoState.Completed)
+                .Include(c => c.CheckItems.OrderBy(e=>e.Order))
+                .OrderBy(e => e.Order)
                 .ToListAsync();
         }
 
         public async Task<Models.Todo?> GetByIdAsync(Models.User user, long id, bool asNoTracking)
         {
             return await Query(asNoTracking)
-                .Where(c => c.UserId == user.Id)
-                .Where(c => c.Id == id)
+                .Where(c => c.UserId == user.Id && c.Id == id)
+                .Include(c => c.CheckItems.OrderBy(e => e.Order))
                 .SingleOrDefaultAsync();
         }
 

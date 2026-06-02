@@ -58,6 +58,7 @@ namespace WebApi.Models.http
         public DateTime? modified_at { get; set; }
         public int? state { get; set; }
         public int? priority { get; set; }
+        public IEnumerable<CheckItemDTO> check_items { get; set; } = new List<CheckItemDTO>();
 
         public TodoDTO() { }
         public TodoDTO(Todo source)
@@ -68,6 +69,7 @@ namespace WebApi.Models.http
             category_id = source.CategoryId;
             state = ((int)source.State);
             priority = ((int)source.Priority);
+            check_items = source.CheckItems.Select(e => new CheckItemDTO(e));
             created_at = source.CreatedAt;
             modified_at = source.UpdatedAt;
         }

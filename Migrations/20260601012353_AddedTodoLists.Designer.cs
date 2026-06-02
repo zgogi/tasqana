@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApi.Repositories;
@@ -11,9 +12,11 @@ using WebApi.Repositories;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(TaskanaDb))]
-    partial class TaskanaDbModelSnapshot : ModelSnapshot
+    [Migration("20260601012353_AddedTodoLists")]
+    partial class AddedTodoLists
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,40 +59,6 @@ namespace WebApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("categories", (string)null);
-                });
-
-            modelBuilder.Entity("WebApi.Models.CheckItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("TodoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TodoId");
-
-                    b.ToTable("todos_checkitems", (string)null);
                 });
 
             modelBuilder.Entity("WebApi.Models.Session", b =>
@@ -211,6 +180,40 @@ namespace WebApi.Migrations
                     b.ToTable("todos", (string)null);
                 });
 
+            modelBuilder.Entity("WebApi.Models.TodoListItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("TodoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TodoId");
+
+                    b.ToTable("todos_listitems", (string)null);
+                });
+
             modelBuilder.Entity("WebApi.Models.User", b =>
                 {
                     b.Property<long>("Id")
@@ -264,17 +267,6 @@ namespace WebApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Models.CheckItem", b =>
-                {
-                    b.HasOne("WebApi.Models.Todo", "Todo")
-                        .WithMany("CheckItems")
-                        .HasForeignKey("TodoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Todo");
-                });
-
             modelBuilder.Entity("WebApi.Models.Session", b =>
                 {
                     b.HasOne("WebApi.Models.User", "User")
@@ -315,6 +307,17 @@ namespace WebApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebApi.Models.TodoListItem", b =>
+                {
+                    b.HasOne("WebApi.Models.Todo", "Todo")
+                        .WithMany("ListItems")
+                        .HasForeignKey("TodoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Todo");
+                });
+
             modelBuilder.Entity("WebApi.Models.Category", b =>
                 {
                     b.Navigation("SubCategories");
@@ -324,7 +327,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.Todo", b =>
                 {
-                    b.Navigation("CheckItems");
+                    b.Navigation("ListItems");
                 });
 
             modelBuilder.Entity("WebApi.Models.User", b =>

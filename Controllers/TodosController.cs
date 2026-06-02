@@ -8,12 +8,16 @@ namespace WebApi.Controllers
     public class TodosController : AbstractController
     {
         private readonly TodosService _todos;
+        private readonly CheckItemService _checkItems;
 
         public TodosController(
             SessionsService sessions,
-            TodosService todos) : base(sessions)
+            TodosService todos,
+            CheckItemService checkItems
+            ) : base(sessions)
         {
             _todos = todos;
+            _checkItems = checkItems;
         }
 
         [HttpPost, Route("create")]
@@ -58,6 +62,6 @@ namespace WebApi.Controllers
 
         }
 
-
+        
     }
 }

@@ -53,7 +53,7 @@
 				<label>Enter category name</label>
 				<input class="value-title w3-input" type="text" />
 				<div class="w3-flex w3-margin">
-					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-create w3-btn w3-blue">Save</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
 				</div>
 			</div>
@@ -66,7 +66,7 @@
 				<label>Enter category name</label>
 				<input class="value-title w3-input" type="text" />
 				<div class="w3-flex w3-margin">
-					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-save w3-btn w3-blue">Save</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
 				</div>
 			</div>
@@ -77,7 +77,7 @@
 			<div class="w3-container">
 				<h2>Delete category?</h2>
 				<div class="w3-flex w3-margin">
-					<button class="btn-confirm w3-btn w3-red">Delete</button>
+					<button class="btn-delete w3-btn w3-red">Delete</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
 				</div>
 			</div>
@@ -92,7 +92,7 @@
 				<label>Task name</label>
 				<textarea class="value-description w3-input"></textarea>
 				<div class="w3-flex w3-margin">
-					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-create w3-btn w3-blue">Save</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
 				</div>
 			</div>
@@ -107,7 +107,7 @@
 				<label>Task name</label>
 				<textarea class="value-description w3-input"></textarea>
 				<div class="w3-flex w3-margin">
-					<button class="btn-confirm w3-btn w3-blue">Save</button>
+					<button class="btn-save w3-btn w3-blue">Save</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
 				</div>
 			</div>
@@ -118,32 +118,50 @@
 			<div class="w3-container">
 				<h2>Delete task?</h2>
 				<div class="w3-flex w3-margin">
-					<button class="btn-confirm w3-btn w3-red">Delete</button>
+					<button class="btn-delete w3-btn w3-red">Delete</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<div id="form-check-edit" class="w3-modal">
+		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
+			<div class="w3-container">
+				<h2>Check item</h2>
+				<label>Enter title</label>
+				<input class="value-title w3-input" type="text" />
+				<div class="w3-flex w3-margin">
+					<button class="btn-create w3-btn w3-blue">Create</button>
+					<button class="btn-save w3-btn w3-blue">Save</button>
+					<button class="btn-cancel w3-btn">Cancel</button>
+					<button class="btn-delete w3-btn w3-red">Delete</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
 		document.addEventListener("DOMContentLoaded", () => {
 			const api = new Api();
 			const store = new AppStore(api);
 			const categoriesView = new CategoriesView(store, document.getElementById("categories-list"));
 			const todosView = new TodosView(store, document.getElementById("todos-title"), document.getElementById("todos-list"));
-			const categoryCreate = new CategoryCreateModalDialog(store, document.getElementById("form-cat-create"));
-			const categoryEdit = new CategoryEditModalDialog(store, document.getElementById("form-cat-edit"));
-			const categoryDelete = new CategoryDeleteModalDialog(store, document.getElementById("form-cat-delete"));
-			const todoCreate = new TodoCreateModalDialog(store, document.getElementById("form-todo-create"));
-			const todoEdit = new TodoEditModalDialog(store, document.getElementById("form-todo-edit"));
-			const todoDelete = new TodoDeleteModalDialog(store, document.getElementById("form-todo-delete"));
+			const categoryCreate = new CategoryCreateModalDialog(store, "form-cat-create");
+			const categoryEdit = new CategoryEditModalDialog(store, "form-cat-edit");
+			const categoryDelete = new CategoryDeleteModalDialog(store, "form-cat-delete");
+			const todoCreate = new TodoCreateModalDialog(store, "form-todo-create");
+			const todoEdit = new TodoEditModalDialog(store, "form-todo-edit");
+			const todoDelete = new TodoDeleteModalDialog(store, "form-todo-delete");
+            const checkEdit = new CheckEditModalDialog(store, "form-check-edit");
 			const dragndrop = new DragNDrop(store);
 			store.update();
 			store.user.autoUpdate();
 
 			document.addEventListener('click', function (event) {
 				subsribeTo(event, ".category-title", node => { store.categories.select(node.dataset.id); });
-				subsribeTo(event, "[data-command]", node => { store.executeCommand(node.dataset.command, node.dataset.id); });
+				subsribeTo(event, ".check-mark", node => { store.todos.checkItemToggle(node.dataset.id); });
+                subsribeTo(event, ".todo-complete", node => { store.todos.save({ id: node.dataset.id, state: 2 }); });
+                subsribeTo(event, "[data-modal]", node => { store.startEdit(node.dataset); });
 			});
 
 			document.getElementById("btn-cat-unsorted").addEventListener("click", function () {
@@ -151,28 +169,28 @@
 			});
 
 			document.getElementById("btn-cat-add").addEventListener("click", function () {
-				store.executeCommand("category-create", null);
+				store.startEdit({ modal: "form-cat-create", id: null });
 			});
 
 			document.getElementById("btn-todo-add").addEventListener("click", function () {
-				store.executeCommand("todo-create", store.categories.selected?.id);
+				store.startEdit({ modal: "form-todo-create", id: store.categories.selected?.id });
 			});
 
-            document.addEventListener("dragstart", function (event) {
-                dragndrop.onStart(event.target);
-            });
+			document.addEventListener("dragstart", function (event) {
+				dragndrop.onStart(event.target);
+			});
 
-            document.addEventListener("dragover", function (event) {
-                if (dragndrop.onEnter(event.target))
-                    event.preventDefault();
-            });
+			document.addEventListener("dragover", function (event) {
+				if (dragndrop.onEnter(event.target))
+					event.preventDefault();
+			});
 
-            document.addEventListener("dragleave", function (event) {
-                dragndrop.onLeave(event.target);
-            });
+			document.addEventListener("dragleave", function (event) {
+				dragndrop.onLeave(event.target);
+			});
 
-            document.addEventListener("dragend", function (event) {
-                dragndrop.onEnd(event.target);
+			document.addEventListener("dragend", function (event) {
+				dragndrop.onEnd(event.target);
 			});
 
 			if (store.user.is_admin)
@@ -193,7 +211,7 @@
 			html.processAccordion(event);
 		});
 
-		
+
 
 
 	</script>

@@ -25,7 +25,11 @@ namespace WebApi.Models
         }
     }
 
-    
+    public interface IOrderable
+    {
+        public long Id { get; set; }
+        public int Order { get; set; }
+    }
 
     public interface IBeforeSaveBehavior
     {

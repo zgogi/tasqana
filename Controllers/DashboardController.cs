@@ -24,7 +24,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpGet, Route("home")]
+     /*   [HttpGet, Route("home")]
         public async Task<ActionResult> Get()
         {
             return await WithAuthenticationAsync(async user => {
@@ -36,6 +36,6 @@ namespace WebApi.Controllers
                 return Ok(result);
             });
 
-        }
+        }*/
     }
 }

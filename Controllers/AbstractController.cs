@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Tasqana.Extensions;
 using WebApi.Services;
 
 namespace WebApi.Controllers
@@ -25,7 +26,14 @@ namespace WebApi.Controllers
         {
             var user = await AuthenticateAsync();
             if (user == null) return Unauthorized();
-            return await action.Invoke(user);
+            try
+            {
+                return await action.Invoke(user);
+            } catch(HttpException ex)
+            {
+                return ex.Result;
+            }
+            
         }
 
         [NonAction]
@@ -38,7 +46,6 @@ namespace WebApi.Controllers
 
         private string? ExtractBearerToken()
         {
-             // Ищем заголовок "Authorization"
             if (!Request.Headers.TryGetValue("Authorization", out var authHeader))
             {
                 return null;
@@ -46,7 +53,6 @@ namespace WebApi.Controllers
 
             string headerValue = authHeader.ToString();
 
-            // Проверяем, что он начинается с "Bearer " (длина слова с пробелом — 7 символов)
             if (headerValue.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
             {
                 return headerValue.Substring(7).Trim();
@@ -55,4 +61,6 @@ namespace WebApi.Controllers
             return null;
         }
     }
+
+
 }

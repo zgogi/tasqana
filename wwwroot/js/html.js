@@ -15,9 +15,11 @@ class Html
 	}
 
 	processAccordion(event) {
-		const click = event.target.closest(".accordion");
+		const click = event.target.closest(".accordion-click");
 		if (click == null) return;
-		const content = click.querySelector(".accordion-content");
+		const parent = click.closest(".accordion");
+		if (parent == null) return;
+		const content = parent.querySelector(".accordion-content");
 		if (content == null) return;
 		if (content.classList.contains("w3-hide"))
 			content.classList.remove("w3-hide");
@@ -33,24 +35,19 @@ class Html
 	}
 
 	hideDropDown() {
-		html._removeClasses("w3-dropdown-content", "w3-show");
-	}
-
-	showModal(id, data=null) {
-		document.getElementById(id).style.display = 'block';
-		this.hideDropDown();
-		this.modalValue = data;
-	}
-
-	hideModal(elem) {
-		const parent = elem.closest(".w3-modal");
-		parent.style.display = 'none';
-		return this.modalValue;
+		this._removeClasses("w3-dropdown-content", "w3-show");
 	}
 
 	setValue(id, value) {
 		const element = document.getElementById(id);
 		element.value = value;
+	}
+
+	setVisible(elem, show) {
+		if (show)
+			elem.classList.remove("w3-hide");
+		else
+			elem.classList.add('w3-hide');
 	}
 
 	createMenu(right=false) {
@@ -61,13 +58,18 @@ class Html
 		return node;
 	}
 
-	createMenuItem(title, command, dataId) {
-		const node = document.createElement("a");
-		node.href = "#";
-		node.className = "w3-bar-item w3-button";
+	createMenuItem(title, data, classes="") {
+		const node = document.createElement("span");
+		node.className = "w3-bar-item w3-button "+classes;
 		node.innerText = title;
-		node.dataset.id = dataId;
-		node.dataset.command = command;
+		for (const [key, value] of Object.entries(data)) {
+			node.dataset[key] = value;
+		}
+
+
+
+		//node.dataset.id = dataId;
+		//node.dataset.modal = command;
 		return node;
 	}
 
