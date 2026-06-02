@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApi.Controllers;
-using WebApi.Models;
+using Tasqana.Controllers;
+using Tasqana.Models;
 
 
-namespace WebApi.Repositories
+namespace Tasqana.Repositories
 {
     public class TaskanaDb : DbContext
     {

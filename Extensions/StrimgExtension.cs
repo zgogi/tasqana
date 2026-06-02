@@ -1,4 +1,4 @@
-﻿namespace WebApi.Extensions
+﻿namespace Tasqana.Extensions
 {
     public static class StrimgExtension
     {

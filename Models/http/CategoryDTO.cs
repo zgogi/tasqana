@@ -1,6 +1,6 @@
-﻿using WebApi.Controllers;
+﻿using Tasqana.Controllers;
 
-namespace WebApi.Models.http
+namespace Tasqana.Models.http
 {
     public class CategoryCreateDTO
     {

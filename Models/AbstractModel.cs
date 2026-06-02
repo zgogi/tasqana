@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using WebApi.Repositories;
+using Tasqana.Repositories;
 
-namespace WebApi.Models
+namespace Tasqana.Models
 {
     public abstract class AbstractModel<T> : IBeforeSaveBehavior where T : class
     {

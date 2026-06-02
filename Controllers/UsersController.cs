@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebApi.Models.http;
-using WebApi.Repositories;
-using WebApi.Services;
+using Tasqana.Models.http;
+using Tasqana.Repositories;
+using Tasqana.Services;
 
-namespace WebApi.Controllers
+namespace Tasqana.Controllers
 {
     [ApiController, Route("api/v1.0/users")]
     public class UsersController : AbstractController

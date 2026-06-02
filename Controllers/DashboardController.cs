@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApi.Models.http;
-using WebApi.Services;
+using Tasqana.Models.http;
+using Tasqana.Services;
 
-namespace WebApi.Controllers
+namespace Tasqana.Controllers
 {
     [ApiController, Route("api/v1.0/dashboard")]
     public class DashboardController : AbstractController

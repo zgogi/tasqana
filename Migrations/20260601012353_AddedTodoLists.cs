@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace WebApi.Migrations
+namespace Tasqana.Migrations
 {
     /// <inheritdoc />
     public partial class AddedTodoLists : Migration

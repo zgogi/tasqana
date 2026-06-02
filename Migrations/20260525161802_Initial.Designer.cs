@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WebApi.Repositories;
+using Tasqana.Repositories;
 
 #nullable disable
 
-namespace WebApi.Migrations
+namespace Tasqana.Migrations
 {
     [DbContext(typeof(TaskanaDb))]
     [Migration("20260525161802_Initial")]

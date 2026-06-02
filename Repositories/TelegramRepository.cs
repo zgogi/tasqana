@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApi.Repositories
+namespace Tasqana.Repositories
 {
     public class TelegramRepository : AbstractRepository<Models.TelegramMessage>
     {

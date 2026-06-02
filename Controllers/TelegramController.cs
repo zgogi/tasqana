@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApi.Services;
+using Tasqana.Services;
 
-namespace WebApi.Controllers
+namespace Tasqana.Controllers
 { 
     [ApiController]
     [Route("api/v1.0/telegram")]

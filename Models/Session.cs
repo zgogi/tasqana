@@ -1,4 +1,4 @@
-﻿namespace WebApi.Models
+﻿namespace Tasqana.Models
 {
     public class Session : AbstractModel<Session>
     {

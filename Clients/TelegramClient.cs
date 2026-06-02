@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration.EnvironmentVariables;
 
-namespace WebApi.Clients
+namespace Tasqana.Clients
 {
     public class TelegramClient
     {

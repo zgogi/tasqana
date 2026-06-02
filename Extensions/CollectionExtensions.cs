@@ -1,6 +1,6 @@
-﻿using WebApi.Models;
+﻿using Tasqana.Models;
 
-namespace WebApi.Extensions
+namespace Tasqana.Extensions
 {
     public static class CollectionExtensions
     {

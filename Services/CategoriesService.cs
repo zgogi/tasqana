@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApi.Models;
-using WebApi.Models.http;
-using WebApi.Repositories;
+using Tasqana.Models;
+using Tasqana.Models.http;
+using Tasqana.Repositories;
 
-namespace WebApi.Services
+namespace Tasqana.Services
 {
     public class CategoriesService
     {

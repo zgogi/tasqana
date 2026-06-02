@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Drawing;
-using WebApi.Repositories;
+using Tasqana.Repositories;
 
-namespace WebApi.Services
+namespace Tasqana.Services
 {
     public class UsersService
     {

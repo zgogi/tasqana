@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace WebApi.Migrations
+namespace Tasqana.Migrations
 {
     /// <inheritdoc />
     public partial class ChecklistWithoutIndex : Migration

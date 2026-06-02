@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tasqana.Extensions;
-using WebApi.Services;
+using Tasqana.Services;
 
-namespace WebApi.Controllers
+namespace Tasqana.Controllers
 {
     public abstract class AbstractController : ControllerBase
     {

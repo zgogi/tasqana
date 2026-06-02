@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApi.Models;
+using Tasqana.Models;
 
-namespace WebApi.Repositories
+namespace Tasqana.Repositories
 {
     public class CategoriesRepository : AbstractRepository<Models.Category>
     {

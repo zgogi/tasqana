@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using WebApi.Models;
+using Tasqana.Models;
 
-namespace WebApi.Models
+namespace Tasqana.Models
 {
     public class CheckItem : AbstractModel<CheckItem>, IOrderable
     {

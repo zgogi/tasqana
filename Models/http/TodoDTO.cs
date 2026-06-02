@@ -1,7 +1,7 @@
-﻿using WebApi.Extensions;
-using static WebApi.Models.http.Telegram;
+﻿using Tasqana.Extensions;
+using static Tasqana.Models.http.Telegram;
 
-namespace WebApi.Models.http
+namespace Tasqana.Models.http
 {
    
     public class TodoCreateDTO

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Runtime.CompilerServices;
 using Tasqana.Extensions;
-using WebApi.Extensions;
-using WebApi.Models.http;
-using WebApi.Repositories;
+using Tasqana.Extensions;
+using Tasqana.Models.http;
+using Tasqana.Repositories;
 
-namespace WebApi.Services
+namespace Tasqana.Services
 {
     public class CheckItemService
     {

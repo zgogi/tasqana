@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using System;
-using WebApi.Clients;
-using WebApi.Extensions;
-using WebApi.Models;
-using WebApi.Repositories;
-using WebApi.Services;
+using Tasqana.Clients;
+using Tasqana.Extensions;
+using Tasqana.Models;
+using Tasqana.Repositories;
+using Tasqana.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

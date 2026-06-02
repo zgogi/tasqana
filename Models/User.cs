@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace WebApi.Models
+namespace Tasqana.Models
 {
     public class User : AbstractModel<User>
     {

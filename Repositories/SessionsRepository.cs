@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace WebApi.Repositories
+namespace Tasqana.Repositories
 {
     public class SessionsRepository : AbstractRepository<Models.Session>
     {

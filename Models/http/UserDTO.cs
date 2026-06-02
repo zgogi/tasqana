@@ -1,6 +1,6 @@
-﻿using WebApi.Extensions;
+﻿using Tasqana.Extensions;
 
-namespace WebApi.Models.http
+namespace Tasqana.Models.http
 {
     public class AuthResponseDTO
     {

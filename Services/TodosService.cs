@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApi.Extensions;
-using WebApi.Repositories;
+using Tasqana.Extensions;
+using Tasqana.Repositories;
 
-namespace WebApi.Services
+namespace Tasqana.Services
 {
     public class TodosService
     {

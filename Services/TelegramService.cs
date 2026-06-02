@@ -1,8 +1,8 @@
-﻿using WebApi.Clients;
-using WebApi.Models;
-using WebApi.Models.http;
-using WebApi.Repositories;
-namespace WebApi.Services
+﻿using Tasqana.Clients;
+using Tasqana.Models;
+using Tasqana.Models.http;
+using Tasqana.Repositories;
+namespace Tasqana.Services
 {
     public class TelegramService
     {

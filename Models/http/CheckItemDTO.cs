@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace WebApi.Models.http
+namespace Tasqana.Models.http
 {
 
     public class CheckItemCreateDTO

@@ -1,4 +1,4 @@
-﻿namespace WebApi.Models.http
+﻿namespace Tasqana.Models.http
 {
     public class DashboardDTO
     {

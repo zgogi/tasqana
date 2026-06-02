@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using WebApi.Models;
+using Tasqana.Models;
 
-namespace WebApi.Repositories
+namespace Tasqana.Repositories
 {
     public abstract class AbstractRepository<T> where T : AbstractModel<T>
     {

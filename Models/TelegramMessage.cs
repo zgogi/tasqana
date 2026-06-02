@@ -1,4 +1,4 @@
-﻿namespace WebApi.Models
+﻿namespace Tasqana.Models
 {
     public class TelegramMessage : AbstractModel<TelegramMessage>
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApi.Controllers;
-using WebApi.Services;
+using Tasqana.Controllers;
+using Tasqana.Services;
 
-namespace WebApi.Controllers
+namespace Tasqana.Controllers
 {
     [ApiController, Route("api/v1.0/todos/checklist")]
     public class CheckListController : AbstractController

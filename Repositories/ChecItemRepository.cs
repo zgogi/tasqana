@@ -1,9 +1,9 @@
 ﻿//using System.Data.Entity;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Models;
-using WebApi.Repositories;
+using Tasqana.Models;
+using Tasqana.Repositories;
 
-namespace WebApi.Repositories
+namespace Tasqana.Repositories
 {
     public class CheckItemRepository : AbstractRepository<CheckItem>
     {

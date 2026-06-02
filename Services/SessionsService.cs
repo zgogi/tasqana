@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
-using WebApi.Repositories;
+using Tasqana.Repositories;
 
-namespace WebApi.Services
+namespace Tasqana.Services
 {
     public class SessionsService
     {

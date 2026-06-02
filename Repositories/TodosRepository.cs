@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApi.Models;
-using WebApi.Models.http;
+using Tasqana.Models;
+using Tasqana.Models.http;
 
-namespace WebApi.Repositories
+namespace Tasqana.Repositories
 {
     public class TodosRepository : AbstractRepository<Models.Todo>
     {
