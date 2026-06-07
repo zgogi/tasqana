@@ -10,6 +10,25 @@
     <script src="/js/api.js"></script>
     <script src="/js/html.js"></script>
     <script src="/js/table.js"></script>
+</head>
+<body class="w3-theme-d5">
+    <div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
+        <i class="fa fa-close w3-right w3-padding w3-btn" onclick='html.hideError();'></i>
+        <p id="error-content" class="w3-padding"></p>
+    </div>
+    <div class="w3-sidebar w3-bar-block w3-theme-d4" style="width:200px">
+        <div class="w3-bar-item w3-btn">
+            <a href="/" class="fa fa-chevron-circle-left w3-xxlarge" style="text-decoration:none;"></a>
+        </div>
+        <div id="menu-users" class="w3-bar-item w3-btn">Users</div>
+        <div id="menu-sessions" class="w3-bar-item w3-btn">Sessions</div>
+        <div id="menu-todos" class="w3-bar-item w3-btn">ToDo's</div>
+        <div id="menu-messages" class="w3-bar-item w3-btn">Messages</div>
+    </div>
+    <div style="margin-left:200px" class="w3-padding">
+        <table id="table" class="w3-table w3-bordered w3-border w3-hoverable" style="width:100%;">
+        </table>
+    </div>
     <script>
         class AdminPanel {
             constructor(api) {
@@ -33,7 +52,7 @@
 
 
         }
-        
+
 
 
         var table_users = new Table("table", [
@@ -69,27 +88,7 @@
             { title: "Created", id: "created_at" },
 
         ]);
-    </script>
-</head>
-<body class="w3-theme-d5">
-    <div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
-        <i class="fa fa-close w3-right w3-padding w3-btn" onclick='html.hideError();'></i>
-        <p id="error-content" class="w3-padding"></p>
-    </div>
-    <div class="w3-sidebar w3-bar-block w3-theme-d4" style="width:200px">
-        <div class="w3-bar-item w3-btn">
-            <a href="/" class="fa fa-chevron-circle-left w3-xxlarge" style="text-decoration:none;"></a>
-        </div>
-        <div id="menu-users" class="w3-bar-item w3-btn">Users</div>
-        <div id="menu-sessions" class="w3-bar-item w3-btn">Sessions</div>
-        <div id="menu-todos" class="w3-bar-item w3-btn">ToDo's</div>
-        <div id="menu-messages" class="w3-bar-item w3-btn">Messages</div>
-    </div>
-    <div style="margin-left:200px" class="w3-padding">
-        <table id="table" class="w3-table w3-bordered w3-border w3-hoverable" style="width:100%;">
-        </table>
-    </div>
-    <script>
+
         document.addEventListener("DOMContentLoaded", () => {
             const api = new Api();
             var admin_panel = new AdminPanel(api);
