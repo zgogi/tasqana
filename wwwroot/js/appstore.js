@@ -41,7 +41,7 @@ class UserStore {
     _getTimeBeforeExpired() {
         const ndate = Date.now();
         const edate = this.expired_at.getTime();
-        return ndate - edate;
+        return edate - ndate;
     }
 
     _setUser(user) {

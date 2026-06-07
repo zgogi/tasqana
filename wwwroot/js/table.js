@@ -1,15 +1,14 @@
 ﻿class Table {
     constructor(id, columns) {
-        this.id = id;
+        this._table = document.getElementById(id);;
         this.columns = columns;
     }
 
     rebuild(data) {
-        const table = document.getElementById(this.id);
-        table.innerHTML = "";
-        table.append(this._createHeader());
+        this._table.innerHTML = "";
+        this._table.append(this._createHeader());
         for (var i = 0; i < data.length; ++i) {
-            table.append(this._createRow(data[i]));
+            this._table.append(this._createRow(data[i]));
         }
     }
 
