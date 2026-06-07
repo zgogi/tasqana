@@ -35,7 +35,7 @@ class Html
 	}
 
 	hideDropDown() {
-		this._removeClasses("w3-dropdown-content", "w3-show");
+		this.removeClasses(".w3-dropdown-content", "w3-show");
 	}
 
 	setValue(id, value) {
@@ -44,33 +44,14 @@ class Html
 	}
 
 	setVisible(elem, show) {
-		if (show)
-			elem.classList.remove("w3-hide");
+		this.setClass(elem, !show, "w3-hide");
+	}
+
+	setClass(elem, value, className) {
+		if (value)
+			elem.classList.add(className);
 		else
-			elem.classList.add('w3-hide');
-	}
-
-	createMenu(right=false) {
-		const node = document.createElement("div");
-		node.className = "w3-dropdown-content w3-bar-block w3-border";
-		if (right)
-			node.style = "right:0";
-		return node;
-	}
-
-	createMenuItem(title, data, classes="") {
-		const node = document.createElement("span");
-		node.className = "w3-bar-item w3-button "+classes;
-		node.innerText = title;
-		for (const [key, value] of Object.entries(data)) {
-			node.dataset[key] = value;
-		}
-
-
-
-		//node.dataset.id = dataId;
-		//node.dataset.modal = command;
-		return node;
+			elem.classList.remove(className);
 	}
 
 	showError(error) {
@@ -82,8 +63,16 @@ class Html
 		document.getElementById("error").classList.add("w3-hide");
 	}
 
-	_removeClasses(whenClass, deleteClass) {
-		const items = document.getElementsByClassName(whenClass);
+	addClasses(query, addClass) {
+		const items = document.querySelectorAll(query);
+		//console.log(query, items);
+		for (var i = 0; i < items.length; ++i) {
+			items[i].classList.add(addClass);
+		}
+	}
+
+	removeClasses(query, deleteClass) {
+		const items = document.querySelectorAll(query);
 		for (var i = 0; i < items.length; ++i) {
 			items[i].classList.remove(deleteClass);
 		}

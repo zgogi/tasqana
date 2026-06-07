@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tasqana.Models;
 using Tasqana.Services;
+using Tasqana.Extensions;
 
 namespace Tasqana.Controllers
 {
@@ -56,7 +57,9 @@ namespace Tasqana.Controllers
             return await WithAuthenticationAsync(async user => {
 
                 var categoryId = ReadQueryLong("category_id");
-                var result = await _todos.GetByCategoryAsync(user, categoryId);
+                var priority = ReadQueryBool("priority");
+                var state = ReadQueryInt("state");
+                var result = await _todos.GetFilteredAsync(user, categoryId, priority == true, state.ToEnum<TodoState>());
                 return Ok(result);
             });
 

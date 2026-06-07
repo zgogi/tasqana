@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="/css/common.css">
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="/js/api.js"></script>
-	<script src="/js/html.js"></script>
-	<script src="/js/appstore.js"></script>
-	<script src="/js/categories.js"></script>
-	<script src="/js/todos.js"></script>
-	<script src="/js/dragndrop.js"></script>
-	<script src="/js/modal.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="/js/api.js"></script>
+    <script src="/js/html.js"></script>
+    <script src="/js/categories.js"></script>
+    <script src="/js/todos.js"></script>
+    <script src="/js/appstore.js"></script>
+    <script src="/js/dragndrop.js"></script>
+    <script src="/js/modal.js"></script>
 </head>
 <body class="w3-theme-d5">
 	<div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
@@ -25,8 +25,8 @@
 		<div id="btn-admin" class="w3-hide w3-padding"><a href="/admin">Admin</a></div>
 		<div class="w3-padding">Hi, <span id="user-name"></span></div>
 	</div>
-	<div class="w3-grid w3-margin" style="gap: 16px; grid-template-columns: repeat(4, 1fr); ">
-		<div id="categories-block" class="w3-card-4 w3-padding w3-round-xlarge">
+	<div class="w3-row w3-margin" style="gap: 16px; grid-template-columns: repeat(4, 1fr); ">
+		<div id="categories-block" class="w3-third w3-card-4 w3-padding w3-round-xlarge">
 			<div class="w3-flex">
 				<h3 class="z-flex-grow">
 					Categories
@@ -35,9 +35,11 @@
 			</div>
 			<div id="categories-list" class=""></div>
 			<hr />
-			<div id="btn-cat-unsorted" class="w3-btn">[Unsorted]</div>
+			<div id="category-priority" class="category-title w3-btn w3-block w3-left-align">Priority</div>
+			<div id="category-unsorted" class="category-title w3-btn w3-block w3-left-align">Unsorted</div>
+			<div id="category-completed" class="category-title w3-btn w3-block w3-left-align">Completed</div>
 		</div>
-		<div id="block-todos" class="w3-card-4 w3-padding w3-round-xlarge">
+		<div id="block-todos" class="w3-twothird w3-card-4 w3-padding w3-round-xlarge">
 			<h3 class="title">
 				<span id="todos-title"></span>
 				<i id="btn-todo-add" class="fa fa-plus-circle w3-right w3-btn"></i>
@@ -101,14 +103,29 @@
 	<div id="form-todo-edit" class="w3-modal">
 		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
 			<div class="w3-container">
-				<h2>Task</h2>
-				<label>Task name</label>
+				<div class="w3-flex" style="align-items:center;">
+					<h2 class="w3-block">Task</h2>
+					<div class="btn-cancel w3-btn fa fa-close"></div>
+				</div>
+				<label>Name</label>
 				<input class="value-title w3-input" type="text" />
-				<label>Task name</label>
-				<textarea class="value-description w3-input"></textarea>
+				<label>Description</label>
+				<textarea class="value-description w3-input" rows="4" style="resize: vertical;"></textarea>
+                <div class="w3-flex" style="align-items:center;">
+                    <div>Priority:</div>
+                    <div class="btn-priority-0 fa fa-star w3-large w3-btn"></div>
+                    <div class="btn-priority-1 fa fa-star w3-large w3-btn"></div>
+                    <div class="btn-priority-2 fa fa-star w3-large w3-btn"></div>
+                    <div class="btn-priority-3 fa fa-star w3-large w3-btn"></div>
+                    <div class="btn-priority-4 fa fa-star w3-large w3-btn"></div>
+                </div>
 				<div class="w3-flex w3-margin">
+					<button class="btn-create w3-btn w3-blue">Create</button>
 					<button class="btn-save w3-btn w3-blue">Save</button>
+					<button class="btn-start w3-btn w3-green w3-hide">Start</button>
+					<button class="btn-complete w3-btn w3-green">Complete</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
+					<button class="btn-delete w3-btn w3-red">Delete</button>
 				</div>
 			</div>
 		</div>
@@ -144,8 +161,6 @@
 		document.addEventListener("DOMContentLoaded", () => {
 			const api = new Api();
 			const store = new AppStore(api);
-			const categoriesView = new CategoriesView(store, document.getElementById("categories-list"));
-			const todosView = new TodosView(store, document.getElementById("todos-title"), document.getElementById("todos-list"));
 			const categoryCreate = new CategoryCreateModalDialog(store, "form-cat-create");
 			const categoryEdit = new CategoryEditModalDialog(store, "form-cat-edit");
 			const categoryDelete = new CategoryDeleteModalDialog(store, "form-cat-delete");
@@ -158,22 +173,33 @@
 			store.user.autoUpdate();
 
 			document.addEventListener('click', function (event) {
-				subsribeTo(event, ".category-title", node => { store.categories.select(node.dataset.id); });
+				subsribeTo(event, ".category-click", node => {
+					const id = node.closest(".category-node").dataset.id;
+					store.categories.select({categoryId:id});
+				});
 				subsribeTo(event, ".check-mark", node => { store.todos.checkItemToggle(node.dataset.id); });
                 subsribeTo(event, ".todo-complete", node => { store.todos.save({ id: node.dataset.id, state: 2 }); });
                 subsribeTo(event, "[data-modal]", node => { store.startEdit(node.dataset); });
 			});
 
-			document.getElementById("btn-cat-unsorted").addEventListener("click", function () {
-				store.categories.select(null);
+			document.getElementById("category-unsorted").addEventListener("click", function () {
+				store.categories.select({});
 			});
+
+            document.getElementById("category-priority").addEventListener("click", function () {
+				store.categories.select({priority:1});
+			});
+
+            document.getElementById("category-completed").addEventListener("click", function () {
+                store.categories.select({ state: 2 });
+            });
 
 			document.getElementById("btn-cat-add").addEventListener("click", function () {
 				store.startEdit({ modal: "form-cat-create", id: null });
 			});
 
 			document.getElementById("btn-todo-add").addEventListener("click", function () {
-				store.startEdit({ modal: "form-todo-create", id: store.categories.selected?.id });
+				store.startEdit({ modal: "form-todo-edit", categoryid: store.todos.filter?.category?.id, iscreate:true });
 			});
 
 			document.addEventListener("dragstart", function (event) {

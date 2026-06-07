@@ -9,6 +9,7 @@ namespace Tasqana.Models.http
         public string title { get; set; } = null!;
         public string? description { get; set; }
         public long? category_id { get; set; }
+        public int? priority { get; set; }
 
         public TodoCreateDTO() { }
 
@@ -38,7 +39,8 @@ namespace Tasqana.Models.http
                 UserId = user.Id,
                 CategoryId = this.category_id,
                 Title = this.title,
-                Description = this.description?.Trim()?.NullIfEmpty()
+                Description = this.description?.Trim()?.NullIfEmpty(),
+                Priority = this.priority.ToEnum<Priority>() ?? Priority.Lowest,
             };
         } 
     }

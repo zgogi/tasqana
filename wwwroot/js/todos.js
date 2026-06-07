@@ -1,100 +1,193 @@
 ﻿
-class TodosView {
-	constructor(store, titleContainer, listContainer) {
-		this.store = store;
-		this.titleContainer = titleContainer;
-		this.listContainer = listContainer;
-		store.subscribe(() => this.render());
-	}
+class TodoFilter {
+    constructor(src = {}) {
+        this.category = src.category ?? null;
+        this.priority = src.priority ?? null;
+        this.state = src.state ?? null;
+    }
 
-	render() {
-		this.titleContainer.innerText = this.store.categories.selected?.title ?? "[Unsorted]";
-		this.listContainer.innerHTML = "";
-		const items = this.store.todos.items;
-		for (var i = 0; i < items.length; ++i) {
-			this.listContainer.append(this._createNode(items[i]));
-		}
-	}
+    toQuery() {
+        const result = [];
+        if (this.category != null) result.push(`category_id=${this.category.id}`);
+        if (this.priority != null) result.push(`priority=${this.priority}`);
+        if (this.state != null) result.push(`state=${this.state}`);
+        return result.join("&");
+    }
+}
 
-	_createNode(item) {
-		const menu = this._createMenu(item);
-		const title = this._createTitle(item.title, menu);
 
-		const node = document.createElement("div");
-		node.dataset.id = item.id;
-		node.draggable = true;
-		node.className = "accordion todo-node w3-bar-item";
-		node.append(title);
-		const content = this._createContent(item);
-		if (content != null)
-			node.append(content);
-		return node;
-	}
+class TodosStore {
+    constructor(parent, api) {
+        this.parent = parent;
+        this.api = api;
+        this.filter = new TodoFilter();
+        this.items = [];
+    }
 
-	_createContent(item) {
-		if ((item.description == null) && (item.check_items.length == 0)) return null;
-		const node = document.createElement("div");
-		node.className = "accordion-content w3-bar-item w3-theme-d2 w3-padding w3-hide";
-		if (item.description != null) {
-			const nodeDesc = document.createElement("div");
-			nodeDesc.innerText = item.description;
-			node.append(nodeDesc);
-		}
-		for (var i = 0; i < item.check_items.length; ++i) {
-			node.append(this._createCheckItem(item.check_items[i]));
-		}
-		return node;
+    setFilter(filter) {
+        this.filter = new TodoFilter(filter);
+        this.update(true);
+    }
 
-	}
+    update(clear=false) {
+        const filter = this.filter.toQuery();
+       // console.log(filter);
+        this.api.get(`/todos/list?${filter}`)
+            .then(resp => {
+                this.items = resp;
+                this.render(clear);
+            });
+    }
 
-	_createMenu(item) {
-		const menu = html.createMenu(true);
-		menu.append(html.createMenuItem("Complete", {id: item.id}, "todo-complete"));
-		menu.append(html.createMenuItem("Edit", { modal: "form-todo-edit", id: item.id }));
-		menu.append(html.createMenuItem("Delete", { modal: "form-todo-delete", id: item.id }));
-		menu.append(html.createMenuItem("Add list item", { modal: "form-check-edit", todoId: item.id }));
-		return menu;
-	}
+    get(id) {
+        for (var i = 0; i < this.items.length; ++i) {
+            if (this.items[i].id == id)
+                return this.items[i];
+        }
+        return null;
+    }
 
-	_createTitle(text, menu) {
-		const iconBtn = document.createElement("div");
-		iconBtn.className = "w3-padding w3-theme-d4 w3-dropdown-click fa fa-ellipsis-v";
-		iconBtn.append(menu);
+    getCheckItem(id) {
+        for (var i = 0; i < this.items.length; ++i) {
+            const subitems = this.items[i].check_items;
+            for (var j = 0; j < subitems.length; ++j) {
+                if (subitems[j].id == id)
+                    return subitems[j];
+            }
+        }
+        return null;
+    }
 
-		const button = document.createElement("div");
-		button.className = "accordion-click w3-btn w3-block w3-theme-d4 w3-left-align w3-padding";
-		button.innerText = text;
+    create(data) {
+        this.api.post(`/todos/create`, data)
+            .then(resp => {
+                this.update();
+                this.parent.categories.update();
+            });
+    }
 
-		const node = document.createElement("div");
-		node.className = "w3-flex";
-		node.append(button);
-		node.append(iconBtn);
+    save(data) {
+        this.api.post(`/todos/update`, data)
+            .then(resp => {
+                this.update();
+                this.parent.categories.update();
+            });
+    }
 
-		return node;
-	}
+    delete(data) {
+        this.api.post(`/todos/delete`, data)
+            .then(resp => {
+                this.update(true);
+                this.parent.categories.update();
+            });
+    }
 
-	_createCheckItem(item) {
-		const check = document.createElement("i");
-		check.className = (item.is_completed) ? "check-mark fa fa-check-square z-clickable" : "check-mark fa fa-check-square-o z-clickable";
-		check.dataset.id = item.id;
+    moveToCategory(itemId, categoryId) {
+        this.save({ id: itemId, category_id: categoryId });
+        //this.parent.categories.select(categoryId);
+    }
 
-		const text = document.createElement("span");
-		text.className = "w3-margin-left";
-		text.innerText = item.title;
+    checkItemToggle(checkId) {
+        this.api.post(`/todos/checklist/toggle`, { id: checkId })
+            .then(resp => { this.update(); });
+    }
 
-		const edit = document.createElement("i");
-		edit.className = "fa fa-edit w3-right z-clickable";
-		edit.dataset.id = item.id;
-		edit.dataset.modal = "form-check-edit";
+    checkItemCreate(todoId, title) {
+        this.api.post(`/todos/checklist/create`, { todo_id: todoId, title: title })
+            .then(resp => { this.update(); });
+    }
 
-		const node = document.createElement("div");
-		node.className = "check-item";
-		node.dataset.id = item.id;
-		node.append(check);
-		node.append(text);
-		node.append(edit);
-		return node;
-	}
+    checkItemSave(id, title) {
+        this.api.post(`/todos/checklist/update`, { id: id, title: title })
+            .then(resp => { this.update(); });
+    }
+
+    checkItemDelete(id) {
+        this.api.post(`/todos/checklist/delete`, { id: id })
+            .then(resp => { this.update(); });
+    }
+
+    render(clear = false) {
+        if (clear)
+            document.getElementById("todos-list").innerHTML = "";
+        this.items.forEach(todo => this._renderItem(todo));
+    }
+
+    _setItem(item) {
+        for (var i = 0; i < this.items.length; ++i) {
+            if (this.items[i].id != item.id) continue;
+            this.items[i] = item;
+            break;
+        }
+        this._renderItem(item);
+    }
+
+    _renderItem(item) {
+        const container = document.getElementById("todos-list");
+        var node = container.querySelector(`.todo-node[data-id="${item.id}"]`);
+        const isNew = !node;
+
+        if (isNew) {
+            node = document.createElement("div");
+            node.dataset.id = item.id;
+            node.draggable = true;
+            node.className = "todo-item accordion todo-node w3-bar-item";
+            node.innerHTML = `
+                <div class="todo-before w3-padding"></div>
+                <div class="w3-block w3-theme-d4 w3-flex" style="align-items:center;">
+                    ${this._renderCategory(item)}
+                    <div class="todo-title accordion-click w3-padding w3-block w3-left-align z-clickable"></div>
+                    <div class="w3-btn fa fa-edit" data-modal="form-todo-edit" data-id="${item.id}"></div>
+                </div>
+                <div class="accordion-content w3-bar-item w3-theme-d2 w3-padding w3-hide">
+                    <div class="todo-description"></div>
+                    <div class="todo-checkitems"></div>
+                    <div class="z-clickable fa fa-plus-square" data-modal="form-check-edit" data-todoid="${item.id}"></div>
+                </div>
+                `;
+        }
+
+        const checkItems = item.check_items.reduce((acc, curr) => acc + `
+        <div class="w3-flex" style="align-items:center;">
+            <div class="check-mark z-clickable ${this._checkBox(curr.is_completed)}" data-id="${curr.id}"></div>
+            <div class="w3-block w3-margin-left">${curr.title}</div>
+            <div class="fa fa-edit z-clickable" data-modal="form-check-edit" data-id="${curr.id}"></div>
+        </div>`, "");
+
+        const title = node.querySelector(".todo-title");
+
+        title.innerText = item.title;
+        node.querySelector(".todo-description").innerText = item.description;
+        node.querySelector(".todo-checkitems").innerHTML = checkItems;
+
+        html.setClass(title, item.priority == 0, "priority-0");
+        html.setClass(title, item.priority == 1, "priority-1");
+        html.setClass(title, item.priority == 2, "priority-2");
+        html.setClass(title, item.priority == 3, "priority-3");
+        html.setClass(title, item.priority == 4, "priority-4");
+
+
+        if (isNew) {
+            container.append(node);
+        }
+    }
+
+    _checkBox(value) {
+        if (value)
+            return "fa fa-check-square-o";
+        else
+            return "fa fa-square-o";
+    }
+
+    _renderCategory(item) {
+        if (this.filter.category == null) {
+            const cat = this.parent.categories.get(item.category_id);
+            if (cat == null) return "";
+            return `<div class="todo-category w3-padding">${cat.title}</div>`;
+        } else {
+            return "";
+        }
+    }
 
 }
 

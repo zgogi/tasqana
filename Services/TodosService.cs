@@ -33,31 +33,31 @@ namespace Tasqana.Services
         public async Task<Models.http.TodoDTO> UpdateAsync(Models.User user, Models.http.TodoDTO source)
         {
             var item = await _todos.GetByIdAsync(user, source.id, false);
-            if (item == null) { throw new Exception("Todo item not found"); }
+            if (item == null) { throw new NotFoundException(); }
             if (source.title != null) item.Title = source.title;
             if (source.description != null) item.Description = source.description;
             if (source.category_id != null) item.CategoryId = source.category_id;
             if (source.state != null) item.State = (Models.TodoState)source.state;
+            if (source.priority != null) item.Priority = (Models.Priority)source.priority;
             await _todos.SaveChangesAsync();
             return new Models.http.TodoDTO(item);
         }
 
-        public async Task<List<Models.Todo>> GetAllAsync()
+        public async Task<IEnumerable<Models.http.TodoExtDTO>> GetAllAsync()
         {
-            return await _todos
-                .Query(true)
-                .Include(c => c.User)
-                .Include(c => c.Category)
-                .ToListAsync();
+            var result = await _todos.GetAllAsync(true);
+            return result.Select(e => new Models.http.TodoExtDTO(e));
         }
 
-       // public async Task<Models.Todo> Insert(Models.User user, long id)
-       // {
-       //     return await _todos.GetByIdAsync(user, id);
-       // }
-        public async Task<IEnumerable<Models.http.TodoDTO>> GetByCategoryAsync(Models.User user, long? categoryId)
+        public async Task<IEnumerable<Models.http.TodoDTO>> GetFilteredAsync(Models.User user, long? categoryId, bool priority, Models.TodoState? state)
         {
-            var result = await _todos.GetByCategoryAsync(user, categoryId);
+            var result = new List<Models.Todo>();
+            if (priority)
+                result = await _todos.GetByPriorityAsync(user, Models.Priority.Low);
+            else if (state != null)
+                result = await _todos.GetByStateAsync(user, state ?? Models.TodoState.Completed);
+            else
+                result = await _todos.GetByCategoryAsync(user, categoryId);
             return result.Select(e => new Models.http.TodoDTO(e));
         }
 

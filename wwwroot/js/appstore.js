@@ -1,161 +1,7 @@
 ﻿
-class CategoriesStore {
-    constructor(parent, api) {
-        this.parent = parent;
-        this.api = api;
-        this.items = [];
-        this.selected = null;
-    }
-
-    update() {
-        this.api.get(`/categories/tree`)
-            .then(resp => {
-                this.items = resp;
-                this.parent.notify();
-            });
-    }
-
-    select(id) {
-        if (id == null) {
-            this.selected = null;
-            this.parent.todos.update();
-            return;
-        }
-
-        this.selected = this.get(id);
-        this.parent.todos.update();
-    }
-
-    create(data) {
-        this.api.post(`/categories/create`, data)
-            .then(resp => {
-                this.update();
-            });
-    }
-
-    save(data) {
-        this.api.post(`/categories/update`, data)
-            .then(resp => {
-                this.update();
-            });
-    }
-
-    delete(data) {
-        this.api.post(`/categories/delete`, data)
-            .then(resp => {
-                this.update();
-                this.select(null);
-            });
-    }
-
-    get(id, items = null) {
-        const litems = items ?? this.items;
-        for (var i = 0; i < litems.length; ++i) {
-            const item = litems[i]
-            if (item.id == id) {
-                return item;
-            }
-            const ret = this.get(id, item.sub_categories);
-            if (ret != null)
-                return ret;
-        }
-        return null;
-    }
-
-
-}
-
-class TodosStore {
-    constructor(parent, api) {
-        this.parent = parent;
-        this.api = api;
-        this.items = [];
-    }
-
-    update() {
-        const categoryId = this.parent.categories.selected?.id ?? null;
-        this.api.get(`/todos/list?category_id=${categoryId}`)
-            .then(resp => {
-                this.items = resp;
-                this.parent.notify();
-            });
-    }
 
 
 
-    get(id) {
-        for (var i = 0; i < this.items.length; ++i) {
-            if (this.items[i].id == id)
-                return this.items[i];
-        }
-        return null;
-    }
-
-    getCheckItem(id) {
-        for (var i = 0; i < this.items.length; ++i) {
-            const subitems = this.items[i].check_items;
-            for (var j = 0; j < subitems.length; ++j) {
-                if (subitems[j].id == id)
-                    return subitems[j];
-            }
-        }
-        return null;
-    }
-
-    create(data) {
-        this.api.post(`/todos/create`, data)
-            .then(resp => {
-                this.parent.update();
-            });
-    }
-
-    save(data) {
-        this.api.post(`/todos/update`, data)
-            .then(resp => {
-                this.parent.update();
-            });
-    }
-
-    delete(data) {
-        this.api.post(`/todos/delete`, data)
-            .then(resp => {
-                this.parent.update();
-            });
-    }
-
-    moveToCategory(itemId, categoryId) {
-        this.save({ id: itemId, category_id: categoryId });
-        this.parent.categories.select(categoryId);
-    }
-
-    checkItemToggle(checkId) {
-        this.api.post(`/todos/checklist/toggle`, { id:checkId })
-            .then(resp => {
-                this.parent.update();
-            });
-    }
-
-    checkItemCreate(todoId, title) {
-        this.api.post(`/todos/checklist/create`, { todo_id: todoId, title: title })
-            .then(resp => {
-                this.parent.update();
-            });
-    }
-
-    checkItemSave(id, title) {
-        this.api.post(`/todos/checklist/update`, { id: id, title:title })
-            .then(resp => {
-                this.parent.update();
-            });
-    }
-
-    checkItemDelete(id) {
-        this.api.post(`/todos/checklist/delete`, { id: id })
-            .then(resp => {
-                this.parent.update();
-            });
-    }
-}
 
 class UserStore {
 
@@ -229,6 +75,8 @@ class AppStore {
         this.user = new UserStore(api);
         this.modal = null; // Editing now
         this._listeners = [];
+
+        
     }
 
     subscribe(listener) {
@@ -241,7 +89,8 @@ class AppStore {
 
     update() {
         this.categories.update();
-        this.todos.update();
+        this.categories.select({});
+        //this.todos.setFilter({});
     }
 
     startEdit(target) {

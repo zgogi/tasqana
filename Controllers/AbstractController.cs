@@ -44,6 +44,23 @@ namespace Tasqana.Controllers
             return null;
         }
 
+        [NonAction]
+        protected int? ReadQueryInt(string name)
+        {
+            var str = Request.Query.FirstOrDefault(s => s.Key.ToLower() == name).Value;
+            if (int.TryParse(str, out var result)) { return result; }
+            return null;
+        }
+
+        [NonAction]
+        protected bool? ReadQueryBool(string name)
+        {
+            var str = Request.Query.FirstOrDefault(s => s.Key.ToLower() == name).Value.ToString();
+            if ((str == "1") || (str.ToLower() == "true")) return true;
+            if ((str == "0") || (str.ToLower() == "false")) return false;
+            return null;
+        }
+
         private string? ExtractBearerToken()
         {
             if (!Request.Headers.TryGetValue("Authorization", out var authHeader))

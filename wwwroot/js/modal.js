@@ -4,8 +4,10 @@ class AbstractModalDialog {
     constructor(store, formId) {
         this.container = document.getElementById(formId);
         this.store = store;
-        this._btnCancel = this.container.querySelector(".btn-cancel");
-        this._btnCancel.addEventListener("click", () => this.hide());
+
+        const btnCancel = this.container.querySelectorAll(".btn-cancel");
+        for (var i = 0; i < btnCancel.length; ++i)
+            btnCancel[i].addEventListener("click", () => this.hide());
 
         this.store.subscribe(() => this.update());
     }
@@ -103,21 +105,96 @@ class TodoEditModalDialog extends AbstractModalDialog {
     constructor(store, formId) {
         super(store, formId);
         this._id = null;
+        this._categoryId = null;
+
         this._title = this.container.querySelector(".value-title");
         this._description = this.container.querySelector(".value-description");
+        this._btnCreate = this.container.querySelector(".btn-create");
         this._btnSave = this.container.querySelector(".btn-save");
-        this._btnSave.addEventListener('click', () => {
-            this.store.todos.save({ id: this._id, title: this._title.value, description: this._description.value });
+        this._btnStart = this.container.querySelector(".btn-start");
+        this._btnComplete = this.container.querySelector(".btn-complete");
+        this._btnDelete = this.container.querySelector(".btn-delete");
+
+        this._btnCreate.addEventListener('click', () => {
+            this.store.todos.create({
+                category_id: this._categoryId,
+                title: this._title.value,
+                description: this._description.value,
+                priority: this._priority
+            });
             this.hide();
+        });
+
+        this._btnComplete.addEventListener('click', () => {
+            this.store.todos.save({
+                id: this._id,
+                state: 2
+            });
+            this.hide();
+        });
+
+        this._btnDelete.addEventListener('click', () => {
+            this.store.todos.delete({
+                id: this._id
+            });
+            this.hide();
+        });
+
+        this._btnSave.addEventListener('click', () => {
+            this.store.todos.save({
+                id: this._id,
+                title: this._title.value,
+                description: this._description.value,
+                priority: this._priority
+            });
+            this.hide();
+        });
+
+        
+
+        this.container.querySelector(".btn-priority-0").addEventListener('click', () => {
+            this._updatePriority(0);
+        });
+
+        this.container.querySelector(".btn-priority-1").addEventListener('click', () => {
+            this._updatePriority(1);
+        });
+
+        this.container.querySelector(".btn-priority-2").addEventListener('click', () => {
+            this._updatePriority(2);
+        });
+
+        this.container.querySelector(".btn-priority-3").addEventListener('click', () => {
+            this._updatePriority(3);
+        });
+
+        this.container.querySelector(".btn-priority-4").addEventListener('click', () => {
+            this._updatePriority(4);
         });
     }
 
     onShow(data) {
         const todo = this.store.todos.get(data.id);
-        this._id = data.id;
-        this._title.value = todo.title;
-        this._description.value = todo.description;
+        this._id = data.id ?? null;
+        this._categoryId = data.categoryid ?? null;
+        this._title.value = todo?.title ?? "";
+        this._description.value = todo?.description ?? "";
+        this._updatePriority(todo?.priority ?? 0);
+
+        html.setVisible(this._btnCreate, data.iscreate == true);
+        html.setVisible(this._btnSave, this._id != null);
+        html.setVisible(this._btnComplete, this._id != null);
+        html.setVisible(this._btnDelete, this._id != null);
     }
+
+    _updatePriority(priority) {
+        this._priority = priority;
+        for (var i = 0; i < 5; ++i) {
+            const elem = this.container.querySelector(`.btn-priority-${i}`);
+            html.setClass(elem, i <= priority, "w3-text-yellow");
+        }
+    }
+
 
 }
 
@@ -166,7 +243,7 @@ class CheckEditModalDialog extends AbstractModalDialog {
 
     onShow(data) {
         this._id = data.id ?? null;
-        this._todoId = data.todoId ?? null;
+        this._todoId = data.todoid ?? null;
         this._title.value = (this._id != null) ? this.store.todos.getCheckItem(this._id).title : "";
         html.setVisible(this._btnCreate, this._todoId != null);
         html.setVisible(this._btnSave, this._id != null);

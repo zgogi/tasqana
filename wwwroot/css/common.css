@@ -3,6 +3,7 @@
     padding: 0px;
 }
 
+
 .z-flex-grow {
     flex-grow: 1;
 }
@@ -25,4 +26,20 @@
 
 .category-title.selected {
     color: yellow;
+}
+
+.priority-1 {
+    color: yellow;
+}
+
+.priority-2 {
+    color: darkorange;
+}
+
+.priority-3 {
+    color: darkorange;
+}
+
+.priority-4 {
+    color: red;
 }

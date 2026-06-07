@@ -26,10 +26,10 @@
 
     public enum Priority
     {
-        Highest = 0,
-        High = 1,
+        Lowest = 0,
+        Low = 1,
         Middle = 2,
-        Low = 3,
-        Lowest = 4,
+        High = 3,
+        Highest = 4,
     }
 }
