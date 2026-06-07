@@ -59,6 +59,14 @@ class CategoriesStore {
 			});
 	}
 
+	moveBefore(id, beforeId) {
+		this.api.post(`/categories/move`, {id: id, before_id: beforeId})
+			.then(resp => {
+				this.items = resp;
+				this.render(true);
+			});
+	}
+
 	get(id, items = null) {
 		const litems = items ?? this.items;
 		for (var i = 0; i < litems.length; ++i) {
@@ -89,16 +97,16 @@ class CategoriesStore {
 		if (isNew) {
 			node = document.createElement("div");
 			node.dataset.id = item.id;
-			node.draggable = true;
+			//node.draggable = true;
 			node.className = "category-node w3-bar-item";
 			node.innerHTML = `
-				<div class="w3-padding"></div>
-				<div class="w3-block w3-flex w3-theme-d4">
+				<div class="category-before w3-padding w3-hide"></div>
+				<div class="category-block w3-block w3-flex w3-theme-d4" draggable="true">
 					<div class="category-click w3-block z-clickable w3-left-align w3-padding">
 						<span class="category-title" data-id="${item.id}"></span>
 						<span class="category-count w3-badge w3-white w3-text-black"></span>
 					</div>
-					<div class="w3-padding w3-theme-d4 w3-dropdown-click fa fa-ellipsis-v">
+					<div class="w3-padding w3-dropdown-click fa fa-ellipsis-v">
                         <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0;">
 							<span class="w3-bar-item w3-button" data-modal="form-cat-create" data-id="${item.id}">Createt</span>
                             <span class="w3-bar-item w3-button" data-modal="form-cat-edit" data-id="${item.id}">Edit</span>
@@ -107,6 +115,7 @@ class CategoriesStore {
                     </div>
 				</div>
 				<div class="category-subnodes w3-margin-left"></div>
+				
 			`;
 
 			var subs = node.querySelector(".category-subnodes");

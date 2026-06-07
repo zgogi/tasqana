@@ -8,11 +8,12 @@ namespace Tasqana.Repositories
         public CategoriesRepository(TaskanaDb context)
             : base(context) { }
 
-        public async Task<List<Models.Category>> GetByUserAndParent(Models.User user, long? parentId)
+        public async Task<List<Models.Category>> GetByUserAndParentAsync(Models.User user, long? parentId, bool asNoTracking)
         {
-            return await Query(true)
+            return await Query(asNoTracking)
                 .Where(c => c.UserId == user.Id)
                 .Where(c => c.ParentId == parentId)
+                .OrderBy(c => c.Order)
                 .ToListAsync();
         }
 

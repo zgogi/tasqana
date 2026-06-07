@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/common.css">
     <script src="/js/api.js"></script>
     <script src="/js/html.js"></script>
     <script src="/js/categories.js"></script>
@@ -85,21 +85,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="form-todo-create" class="w3-modal">
-		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
-			<div class="w3-container">
-				<h2>Create task</h2>
-				<label>Task name</label>
-				<input class="value-title w3-input" type="text" />
-				<label>Task name</label>
-				<textarea class="value-description w3-input"></textarea>
-				<div class="w3-flex w3-margin">
-					<button class="btn-create w3-btn w3-blue">Save</button>
-					<button class="btn-cancel w3-btn">Cancel</button>
-				</div>
-			</div>
-		</div>
-	</div>
+
 	<div id="form-todo-edit" class="w3-modal">
 		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
 			<div class="w3-container">
@@ -130,17 +116,6 @@
 			</div>
 		</div>
 	</div>
-	<div id="form-todo-delete" class="w3-modal">
-		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
-			<div class="w3-container">
-				<h2>Delete task?</h2>
-				<div class="w3-flex w3-margin">
-					<button class="btn-delete w3-btn w3-red">Delete</button>
-					<button class="btn-cancel w3-btn">Cancel</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	<div id="form-check-edit" class="w3-modal">
 		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
@@ -164,9 +139,7 @@
 			const categoryCreate = new CategoryCreateModalDialog(store, "form-cat-create");
 			const categoryEdit = new CategoryEditModalDialog(store, "form-cat-edit");
 			const categoryDelete = new CategoryDeleteModalDialog(store, "form-cat-delete");
-			const todoCreate = new TodoCreateModalDialog(store, "form-todo-create");
 			const todoEdit = new TodoEditModalDialog(store, "form-todo-edit");
-			const todoDelete = new TodoDeleteModalDialog(store, "form-todo-delete");
             const checkEdit = new CheckEditModalDialog(store, "form-check-edit");
 			const dragndrop = new DragNDrop(store);
 			store.update();
@@ -178,7 +151,6 @@
 					store.categories.select({categoryId:id});
 				});
 				subsribeTo(event, ".check-mark", node => { store.todos.checkItemToggle(node.dataset.id); });
-                subsribeTo(event, ".todo-complete", node => { store.todos.save({ id: node.dataset.id, state: 2 }); });
                 subsribeTo(event, "[data-modal]", node => { store.startEdit(node.dataset); });
 			});
 

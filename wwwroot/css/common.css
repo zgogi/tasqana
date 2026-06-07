@@ -21,7 +21,11 @@
 }
 
 .drop-target {
-    background-color: #0094ff;
+    background-color: #0094ff !important;
+    
+}
+.w3-hide.drop-target {
+    display: block !important;
 }
 
 .category-title.selected {

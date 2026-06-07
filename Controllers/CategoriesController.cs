@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Tasqana.Models;
 using Tasqana.Models.http;
 using Tasqana.Services;
 
@@ -54,6 +55,16 @@ namespace Tasqana.Controllers
             return await WithAuthenticationAsync(async user => { 
                 await _categories.DeleteAsync(user, form.id);
                 return NoContent();   
+            });
+        }
+
+        [HttpPost, Route("move")]
+        public async Task<ActionResult> CategoryMoveAsync(Models.http.ReorderDTO form)
+        {
+            return await WithAuthenticationAsync(async user => {
+                await _categories.MoveAsync(user, form);
+                var result = await _categories.GetTreeAsync(user);
+                return Ok(result);
             });
         }
 

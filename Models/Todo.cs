@@ -1,6 +1,6 @@
 ﻿namespace Tasqana.Models
 {
-    public class Todo : AbstractModel<Todo>
+    public class Todo : AbstractModel<Todo>, IOrderable
     {
         public long UserId { get; set; }
         public long? CategoryId { get; set; }

@@ -18,9 +18,9 @@ namespace Tasqana.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Models.Todo>> GetByCategoryAsync(Models.User user, long? categoryId)
+        public async Task<List<Models.Todo>> GetByCategoryAsync(Models.User user, long? categoryId, bool asNoTracking = true)
         {
-            var query = Query(true)
+            var query = Query(asNoTracking)
                 .Where(c => c.UserId == user.Id)
                 .Where(c => c.CategoryId == categoryId)
                 .Where(c => c.State != TodoState.Completed)

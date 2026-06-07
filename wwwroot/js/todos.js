@@ -29,13 +29,13 @@ class TodosStore {
         this.update(true);
     }
 
-    update(clear=false) {
+    update(rebuild=false) {
         const filter = this.filter.toQuery();
        // console.log(filter);
         this.api.get(`/todos/list?${filter}`)
             .then(resp => {
                 this.items = resp;
-                this.render(clear);
+                this.render(rebuild);
             });
     }
 
@@ -66,11 +66,16 @@ class TodosStore {
             });
     }
 
-    save(data) {
+    save(data, rebuild) {
         this.api.post(`/todos/update`, data)
             .then(resp => {
-                this.update();
-                this.parent.categories.update();
+                if (rebuild) {
+                    this.update(rebuild);
+                    this.parent.categories.update(rebuild);
+                } else {
+                    this._renderItem(resp);
+                }
+                
             });
     }
 
@@ -83,7 +88,7 @@ class TodosStore {
     }
 
     moveToCategory(itemId, categoryId) {
-        this.save({ id: itemId, category_id: categoryId });
+        this.save({ id: itemId, category_id: categoryId }, true);
         //this.parent.categories.select(categoryId);
     }
 
@@ -130,11 +135,11 @@ class TodosStore {
         if (isNew) {
             node = document.createElement("div");
             node.dataset.id = item.id;
-            node.draggable = true;
-            node.className = "todo-item accordion todo-node w3-bar-item";
+           // node.draggable = true;
+            node.className = "todo-node accordion w3-bar-item";
             node.innerHTML = `
-                <div class="todo-before w3-padding"></div>
-                <div class="w3-block w3-theme-d4 w3-flex" style="align-items:center;">
+                <div class="todo-before w3-padding w3-hide"></div>
+                <div class="w3-block w3-theme-d4 w3-flex" style="align-items:center;" draggable="true">
                     ${this._renderCategory(item)}
                     <div class="todo-title accordion-click w3-padding w3-block w3-left-align z-clickable"></div>
                     <div class="w3-btn fa fa-edit" data-modal="form-todo-edit" data-id="${item.id}"></div>

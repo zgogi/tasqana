@@ -81,26 +81,6 @@ class CategoryDeleteModalDialog extends AbstractModalDialog {
     }
 }
 
-class TodoCreateModalDialog extends AbstractModalDialog {
-    constructor(store, formId) {
-        super(store, formId);
-        this._categoryId = null;
-        this._title = this.container.querySelector(".value-title");
-        this._description = this.container.querySelector(".value-description");
-        this._btnCreate = this.container.querySelector(".btn-create");
-        this._btnCreate.addEventListener('click', () => {
-            this.store.todos.create({ category_id: this._categoryId, title: this._title.value, description: this._description.value });
-            this.hide();
-        });
-    }
-
-    onShow(data) {
-        this._categoryId = data.id;
-        this._title.value = "";
-        this._description.value = "";
-    }
-}
-
 class TodoEditModalDialog extends AbstractModalDialog {
     constructor(store, formId) {
         super(store, formId);
@@ -129,7 +109,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
             this.store.todos.save({
                 id: this._id,
                 state: 2
-            });
+            }, true);
             this.hide();
         });
 
@@ -146,7 +126,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
                 title: this._title.value,
                 description: this._description.value,
                 priority: this._priority
-            });
+            }, false);
             this.hide();
         });
 
@@ -195,23 +175,6 @@ class TodoEditModalDialog extends AbstractModalDialog {
         }
     }
 
-
-}
-
-class TodoDeleteModalDialog extends AbstractModalDialog {
-    constructor(store, formId) {
-        super(store, formId);
-        this._id = null;
-        this._deleteBtn = this.container.querySelector(".btn-delete");
-        this._deleteBtn.addEventListener('click', () => {
-            this.store.todos.delete({ id: this._id });
-            this.hide();
-        });
-    }
-
-    onShow(data) {
-        this._id = data.id;
-    }
 
 }
 

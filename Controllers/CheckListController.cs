@@ -48,7 +48,7 @@ namespace Tasqana.Controllers
         }
 
         [HttpPost, Route("move")]
-        public async Task<ActionResult> ChecklistItemDelete(Models.http.ReorderDTO form)
+        public async Task<ActionResult> ChecklistItemMove(Models.http.ReorderDTO form)
         {
             return await WithAuthenticationAsync(async user => {
                 var result = await _checkItems.MoveAsync(user, form);

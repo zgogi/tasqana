@@ -51,6 +51,16 @@ namespace Tasqana.Controllers
             });
         }
 
+        [HttpPost, Route("move")]
+        public async Task<ActionResult> MoveAsync(Models.http.ReorderDTO form)
+        {
+            return await WithAuthenticationAsync(async user =>
+            {
+                var result = await _todos.MoveAsync(user, form);
+                return Ok(result);
+            });
+        }
+
         [HttpGet, Route("list")]
         public async Task<ActionResult> Get()
         {

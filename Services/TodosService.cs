@@ -66,5 +66,16 @@ namespace Tasqana.Services
             await _todos.DeleteAsync(user, id);
         }
 
+        public async Task<IEnumerable<Models.http.TodoDTO>> MoveAsync(Models.User user, Models.http.ReorderDTO form)
+        {
+            var item = await _todos.GetByIdAsync(user, form.id, true);
+            if (item == null) throw new NotFoundException();
+
+            var items = await _todos.GetByCategoryAsync(user, item.CategoryId, false);
+            items.MoveBefore(form.id, form.before_id);
+            await _todos.SaveChangesAsync();
+            return items.Select(e => new Models.http.TodoDTO(e));
+        }
+
     }
 }

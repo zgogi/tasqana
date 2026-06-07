@@ -2,7 +2,7 @@
 
 namespace Tasqana.Models
 {
-    public class Category : AbstractModel<Category>
+    public class Category : AbstractModel<Category>, IOrderable
     {
         public long? ParentId { get; set; }
         public long UserId { get; set; }
