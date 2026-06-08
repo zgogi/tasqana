@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/common.css">
-    <script src="/js/api.js"></script>
-    <script src="/js/html.js"></script>
-    <script src="/js/categories.js"></script>
-    <script src="/js/todos.js"></script>
-    <script src="/js/appstore.js"></script>
-    <script src="/js/dragndrop.js"></script>
-    <script src="/js/modal.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/css/common.css">
+	<script src="/js/api.js"></script>
+	<script src="/js/html.js"></script>
+	<script src="/js/categories.js"></script>
+	<script src="/js/table.js"></script>
+	<script src="/js/todos.js"></script>
+	<script src="/js/appstore.js"></script>
+	<script src="/js/dragndrop.js"></script>
+	<script src="/js/modal.js"></script>
 </head>
 <body class="w3-theme-d5">
 	<div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
@@ -35,9 +36,20 @@
 			</div>
 			<div id="categories-list" class=""></div>
 			<hr />
-			<div id="category-priority" class="category-title w3-btn w3-block w3-left-align">Priority</div>
-			<div id="category-unsorted" class="category-title w3-btn w3-block w3-left-align">Unsorted</div>
-			<div id="category-completed" class="category-title w3-btn w3-block w3-left-align">Completed</div>
+			<div id="category-priority" class="category-title w3-btn w3-block w3-left-align">
+				<i class="fa fa-exclamation-triangle w3-text-red"></i> Priority
+			</div>
+			<div id="category-unsorted" class="category-title w3-btn w3-block w3-left-align">
+				<i class="fa fa-telegram w3-text-blue"></i> Unsorted
+			</div>
+			<div id="category-started" class="category-title w3-btn w3-block w3-left-align">
+                <i class="fa fa-toggle-right w3-text-yellow"></i> Started
+			</div>
+			<div id="category-completed" class="category-title w3-btn w3-block w3-left-align">
+                <i class="fa fa-check-square w3-text-green"></i> Completed
+			</div>
+			
+			
 		</div>
 		<div id="block-todos" class="w3-twothird w3-card-4 w3-padding w3-round-xlarge">
 			<h3 class="title">
@@ -105,13 +117,15 @@
                     <div class="btn-priority-3 fa fa-star w3-large w3-btn"></div>
                     <div class="btn-priority-4 fa fa-star w3-large w3-btn"></div>
                 </div>
+				<table id="table-todo-checkitems" width="100%"></table>
 				<div class="w3-flex w3-margin">
 					<button class="btn-create w3-btn w3-blue">Create</button>
 					<button class="btn-save w3-btn w3-blue">Save</button>
-					<button class="btn-start w3-btn w3-green w3-hide">Start</button>
+					<button class="btn-start w3-btn w3-yellow">Start</button>
 					<button class="btn-complete w3-btn w3-green">Complete</button>
+                    <button class="btn-delete w3-btn w3-red">Delete</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
-					<button class="btn-delete w3-btn w3-red">Delete</button>
+					
 				</div>
 			</div>
 		</div>
@@ -161,6 +175,10 @@
             document.getElementById("category-priority").addEventListener("click", function () {
 				store.categories.select({priority:1});
 			});
+
+            document.getElementById("category-started").addEventListener("click", function () {
+                store.categories.select({ state: 1 });
+            });
 
             document.getElementById("category-completed").addEventListener("click", function () {
                 store.categories.select({ state: 2 });

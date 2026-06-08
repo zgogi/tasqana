@@ -77,6 +77,7 @@ class Html
 			items[i].classList.remove(deleteClass);
 		}
 	}
+
 }
 
 const html = new Html();

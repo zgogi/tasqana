@@ -139,9 +139,11 @@ class TodosStore {
             node.className = "todo-node accordion w3-bar-item";
             node.innerHTML = `
                 <div class="todo-before w3-padding w3-hide"></div>
-                <div class="w3-block w3-theme-d4 w3-flex" style="align-items:center;" draggable="true">
+                <div class="w3-block w3-theme-d4 w3-flex w3-padding" style="align-items:center; gap:8px;" draggable="true">
                     ${this._renderCategory(item)}
-                    <div class="todo-title accordion-click w3-padding w3-block w3-left-align z-clickable"></div>
+                    <div class="todo-started fa fa-toggle-right w3-text-yellow w3-hide"></div>
+                    <div class="todo-completed fa fa-check-square w3-text-green w3-hide"></div>
+                    <div class="todo-title accordion-click w3-block w3-left-align z-clickable"></div>
                     <div class="w3-btn fa fa-edit" data-modal="form-todo-edit" data-id="${item.id}"></div>
                 </div>
                 <div class="accordion-content w3-bar-item w3-theme-d2 w3-padding w3-hide">
@@ -171,6 +173,8 @@ class TodosStore {
         html.setClass(title, item.priority == 3, "priority-3");
         html.setClass(title, item.priority == 4, "priority-4");
 
+        html.setVisible(node.querySelector(".todo-started"), item.state == 1);
+        html.setVisible(node.querySelector(".todo-completed"), item.state == 2);
 
         if (isNew) {
             container.append(node);
@@ -188,7 +192,7 @@ class TodosStore {
         if (this.filter.category == null) {
             const cat = this.parent.categories.get(item.category_id);
             if (cat == null) return "";
-            return `<div class="todo-category w3-padding">${cat.title}</div>`;
+            return `<div class="todo-category">${cat.title}</div>`;
         } else {
             return "";
         }

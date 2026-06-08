@@ -86,6 +86,12 @@ class TodoEditModalDialog extends AbstractModalDialog {
         super(store, formId);
         this._id = null;
         this._categoryId = null;
+        this._table = new Table("table-todo-checkitems", [
+            { id: "id", type: "hidden" },
+            { id: "is_completed", type: "input-checkbox" },
+            { id: "title", type: "input-text" },
+            { id: "trash", type: "button" }
+        ]);
 
         this._title = this.container.querySelector(".value-title");
         this._description = this.container.querySelector(".value-description");
@@ -102,6 +108,14 @@ class TodoEditModalDialog extends AbstractModalDialog {
                 description: this._description.value,
                 priority: this._priority
             });
+            this.hide();
+        });
+
+        this._btnStart.addEventListener('click', () => {
+            this.store.todos.save({
+                id: this._id,
+                state: 1
+            }, true);
             this.hide();
         });
 
@@ -151,6 +165,8 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this.container.querySelector(".btn-priority-4").addEventListener('click', () => {
             this._updatePriority(4);
         });
+
+        this._table.addEventListener((row,id) => this._onTableButton(row,id));
     }
 
     onShow(data) {
@@ -163,8 +179,14 @@ class TodoEditModalDialog extends AbstractModalDialog {
 
         html.setVisible(this._btnCreate, data.iscreate == true);
         html.setVisible(this._btnSave, this._id != null);
-        html.setVisible(this._btnComplete, this._id != null);
+        html.setVisible(this._btnStart, this._id != null && todo.state < 1);
+        html.setVisible(this._btnComplete, this._id != null && todo.state < 2);
         html.setVisible(this._btnDelete, this._id != null);
+
+       /* if (todo != null)
+            this._table.rebuild(todo.check_items, false);
+        else
+            this._table.clear();*/
     }
 
     _updatePriority(priority) {
@@ -175,6 +197,9 @@ class TodoEditModalDialog extends AbstractModalDialog {
         }
     }
 
+    _onTableButton(row, id) {
+        console.log("on button", row, id);
+    }
 
 }
 
