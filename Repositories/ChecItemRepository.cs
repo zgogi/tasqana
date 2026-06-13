@@ -16,10 +16,12 @@ namespace Tasqana.Repositories
                 .SingleOrDefaultAsync();
         }
 
-       // public async Task<List<Models.CheckItem>> GetByParentIdAsync(Models.User user, long todoId, bool asNoTracking)
-       // {
-
-       // }
+        public async Task<List<Models.CheckItem>> GetByParentIdAsync(Models.Todo todo, bool asNoTracking)
+        {
+            return await Query(asNoTracking)
+                .Where(e => e.TodoId == todo.Id)
+                .ToListAsync();
+        }
 
     }
 }

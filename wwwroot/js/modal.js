@@ -91,7 +91,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
             { id: "is_completed", type: "input-checkbox" },
             { id: "title", type: "input-text" },
             { id: "trash", type: "button" }
-        ]);
+        ], true);
 
         this._title = this.container.querySelector(".value-title");
         this._description = this.container.querySelector(".value-description");
@@ -100,6 +100,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._btnStart = this.container.querySelector(".btn-start");
         this._btnComplete = this.container.querySelector(".btn-complete");
         this._btnDelete = this.container.querySelector(".btn-delete");
+        this._btnCheckListAdd = this.container.querySelector(".btn-checklist-add");
 
         this._btnCreate.addEventListener('click', () => {
             this.store.todos.create({
@@ -135,12 +136,8 @@ class TodoEditModalDialog extends AbstractModalDialog {
         });
 
         this._btnSave.addEventListener('click', () => {
-            this.store.todos.save({
-                id: this._id,
-                title: this._title.value,
-                description: this._description.value,
-                priority: this._priority
-            }, false);
+            const data = this._getItem();
+            this.store.todos.save(data, false);
             this.hide();
         });
 
@@ -166,7 +163,17 @@ class TodoEditModalDialog extends AbstractModalDialog {
             this._updatePriority(4);
         });
 
-        this._table.addEventListener((row,id) => this._onTableButton(row,id));
+        this._btnCheckListAdd.addEventListener("click", () => {
+            this._table.addRow();
+        });
+
+        this._table.addClickListener((row, id) => {
+            if (id == "trash")
+                row.remove();
+        });
+
+        
+
     }
 
     onShow(data) {
@@ -183,10 +190,10 @@ class TodoEditModalDialog extends AbstractModalDialog {
         html.setVisible(this._btnComplete, this._id != null && todo.state < 2);
         html.setVisible(this._btnDelete, this._id != null);
 
-       /* if (todo != null)
+        if (todo != null)
             this._table.rebuild(todo.check_items, false);
         else
-            this._table.clear();*/
+            this._table.clear();
     }
 
     _updatePriority(priority) {
@@ -197,8 +204,14 @@ class TodoEditModalDialog extends AbstractModalDialog {
         }
     }
 
-    _onTableButton(row, id) {
-        console.log("on button", row, id);
+    _getItem() {
+        return {
+            id: this._id,
+            title: this._title.value,
+            description: this._description.value,
+            priority: this._priority,
+            check_items: this._table.read()
+        }
     }
 
 }

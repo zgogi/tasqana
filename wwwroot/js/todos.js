@@ -73,7 +73,7 @@ class TodosStore {
                     this.update(rebuild);
                     this.parent.categories.update(rebuild);
                 } else {
-                    this._renderItem(resp);
+                    this._setItem(resp);
                 }
                 
             });

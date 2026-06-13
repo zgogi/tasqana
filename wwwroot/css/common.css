@@ -22,10 +22,15 @@
 
 .drop-target {
     background-color: #0094ff !important;
-    
 }
 .w3-hide.drop-target {
     display: block !important;
+}
+
+.drop-before td {
+    border-top-style: solid;
+    border-color: blue;
+    border-width: 2px;
 }
 
 .category-title.selected {

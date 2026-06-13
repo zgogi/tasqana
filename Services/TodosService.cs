@@ -7,10 +7,13 @@ namespace Tasqana.Services
     public class TodosService
     {
         private readonly TodosRepository _todos;
+        private readonly CheckItemService _checkitems;
         public TodosService(
-            TodosRepository todos
+            TodosRepository todos,
+            CheckItemService checkitems
             ) { 
             _todos = todos;
+            _checkitems = checkitems;
         }
 
         public async Task<Models.Todo> InsertAsync(Models.User user, long? categoryId, string title, string? description)
@@ -39,6 +42,12 @@ namespace Tasqana.Services
             if (source.category_id != null) item.CategoryId = source.category_id;
             if (source.state != null) item.State = (Models.TodoState)source.state;
             if (source.priority != null) item.Priority = (Models.Priority)source.priority;
+            
+            if (source.check_items != null)
+            {
+                _checkitems.UpdateList(item, source.check_items.ToList());
+            }
+
             await _todos.SaveChangesAsync();
             return new Models.http.TodoDTO(item);
         }

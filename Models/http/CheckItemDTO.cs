@@ -19,7 +19,7 @@ namespace Tasqana.Models.http
     }
     public class CheckItemDTO
     {
-        public long id { get; set; }
+        public long? id { get; set; }
         public string? title { get; set; }
         public bool? is_completed { get; set; }
 
@@ -30,6 +30,15 @@ namespace Tasqana.Models.http
             id = source.Id;
             title = source.Title;
             is_completed = source.IsCompleted;
+        }
+
+        public Models.CheckItem ToDb()
+        {
+            return new CheckItem
+            {
+                Title = this.title ?? "",
+                IsCompleted = this.is_completed ?? false,
+            };
         }
     }
 }

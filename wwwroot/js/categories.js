@@ -26,7 +26,11 @@ class CategoriesStore {
 			this.selected = null;
 			this.parent.todos.setFilter(filter);
 			html.addClasses(`#category-priority`, "selected");
-		} else if (filter.state != undefined) {
+		} else if (filter.state == 1) {
+			this.selected = null;
+			this.parent.todos.setFilter(filter);
+			html.addClasses(`#category-started`, "selected");
+		} else if (filter.state == 2) {
 			this.selected = null;
 			this.parent.todos.setFilter(filter);
 			html.addClasses(`#category-completed`, "selected");

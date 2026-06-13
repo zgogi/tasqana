@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Runtime.CompilerServices;
 using Tasqana.Extensions;
-using Tasqana.Extensions;
+using Tasqana.Models;
 using Tasqana.Models.http;
 using Tasqana.Repositories;
 
@@ -32,12 +32,60 @@ namespace Tasqana.Services
 
         public async Task<Models.http.CheckItemDTO> UpdateAsync(Models.User user, Models.http.CheckItemDTO form)
         {
-            var item = await _checkitems.GetByIdAsync(user, form.id, false);
+            var item = await _checkitems.GetByIdAsync(user, form.id ?? 0, false);
             if (item == null) throw new NotFoundException();
             if (form.title != null) item.Title = form.title;
             if (form.is_completed != null) item.IsCompleted = form.is_completed ?? false;
             await _checkitems.SaveChangesAsync();
             return new Models.http.CheckItemDTO(item);
+        }
+
+        public void UpdateList(Models.Todo todo, List<Models.http.CheckItemDTO> items)
+        {
+            var incomingIds = items
+                 .Where(x => x.id.HasValue)
+                 .Select(x => x.id!.Value)
+                 .ToList();
+
+            var itemsToRemove = todo.CheckItems
+                .Where(existing => !incomingIds.Contains(existing.Id))
+                .ToList();
+
+            foreach (var item in itemsToRemove)
+            {
+                todo.CheckItems.Remove(item);
+            }
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                var incomingItem = items[i];
+
+                if (incomingItem.id.HasValue && incomingItem.id.Value > 0)
+                {
+                    var existingItem = todo.CheckItems
+                        .FirstOrDefault(x => x.Id == incomingItem.id.Value);
+
+                    if (existingItem != null)
+                    {
+                        existingItem.Title = incomingItem.title ?? "";
+                        existingItem.IsCompleted = incomingItem.is_completed ?? false;
+                        existingItem.Order = i; 
+                    }
+                }
+                else
+                {
+                    var newItem = new CheckItem
+                    {
+                        Title = incomingItem.title ?? "",
+                        IsCompleted = incomingItem.is_completed ?? false,
+                        TodoId = todo.Id,
+                        Order = i 
+                    };
+
+                    todo.CheckItems.Add(newItem);
+                }
+            }
+            todo.CheckItems.Sort((a,b) => a.Order.CompareTo(b.Order));
         }
 
         public async Task<Models.http.CheckItemDTO> ToggleAsync(Models.User user, long id)
