@@ -193,6 +193,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
             id: this._id,
             title: this._title.value,
             description: this._description.value,
+            category_id: this._categoryId,
             priority: this._priority,
             check_items: this._table.read()
         }
