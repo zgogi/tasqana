@@ -31,7 +31,7 @@
 			<div class="w3-flex">
 				<h3 class="z-flex-grow">
 					Categories
-					<i id="btn-cat-add" class="btn-cat-create fa fa-plus-circle w3-right w3-btn"></i>
+					<i class="btn-cat-edit fa fa-plus-circle w3-right w3-btn"></i>
 				</h3>
 			</div>
 			<div id="categories-list" class=""></div>
@@ -54,32 +54,23 @@
 		<div id="block-todos" class="w3-twothird w3-card-4 w3-padding w3-round-xlarge">
 			<h3 class="title">
 				<span id="todos-title"></span>
-				<i id="btn-todo-create" class="fa fa-plus-circle w3-right w3-btn"></i>
+				<i class="btn-todo-edit fa fa-plus-circle w3-right w3-btn"></i>
 			</h3>
 			<div id="todos-list"></div>
 
 		</div>
 	</div>
-	<div id="form-cat-create" class="w3-modal">
-		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
-			<div class="w3-container">
-				<h2>Create category</h2>
-				<label>Enter category name</label>
-				<input class="value-title w3-input" type="text" />
-				<div class="w3-flex w3-margin">
-					<button class="btn-create w3-btn w3-blue">Save</button>
-					<button class="btn-cancel w3-btn">Cancel</button>
-				</div>
-			</div>
-		</div>
-	</div>
 	<div id="form-cat-edit" class="w3-modal">
 		<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-theme-d4 w3-round-xlarge">
 			<div class="w3-container">
-				<h2>Category</h2>
+				<div class="w3-flex" style="align-items:center;">
+					<h2 class="w3-block">Category</h2>
+					<div class="btn-cancel w3-btn fa fa-close"></div>
+				</div>
 				<label>Enter category name</label>
 				<input class="value-title w3-input" type="text" />
 				<div class="w3-flex w3-margin">
+					<button class="btn-create w3-btn w3-blue">Create</button>
 					<button class="btn-save w3-btn w3-blue">Save</button>
 					<button class="btn-cancel w3-btn">Cancel</button>
 				</div>
@@ -140,10 +131,6 @@
 			const api = new Api();
 			const store = new AppStore(api);
 			const modal = new Modal(store);
-			//const categoryCreate = new CategoryCreateModalDialog(store, 'form-cat-create');
-			//const categoryEdit = new CategoryEditModalDialog(store, 'form-cat-edit');
-			//const categoryDelete = new CategoryDeleteModalDialog(store, 'form-cat-delete');
-			//const todoEdit = new TodoEditModalDialog(store, 'form-todo-edit');
 			const dragndrop = new DragNDrop(store);
 			store.update();
 			store.user.autoUpdate();
@@ -154,8 +141,7 @@
 					store.categories.select({categoryId:id});
 				});
 				subsribeTo(event, '.check-mark', node => { store.todos.checkItemToggle(node.dataset.id); });
-				subsribeTo(event, '.btn-cat-create', node => { modal.categoryCreate.show({ id: node.dataset.id ?? null }); })
-                subsribeTo(event, '.btn-cat-edit', node => { modal.categoryEdit.show({ id: node.dataset.id }); })
+                subsribeTo(event, '.btn-cat-edit', node => { modal.categoryEdit.show({ id: node.dataset.id, parentId: node.dataset.parent_id }); })
 				subsribeTo(event, '.btn-cat-delete', node => { modal.categoryDelete.show({ id: node.dataset.id }); })
                 subsribeTo(event, '.btn-todo-edit', node => { modal.todoEdit.show({ id: node.dataset.id }); })
 			});
@@ -176,10 +162,6 @@
                 store.categories.select({ state: 2 });
             });
 
-
-			document.getElementById('btn-todo-create').addEventListener('click', function () {
-				modal.todoEdit.show({categoryid: store.todos.filter?.category?.id });
-			});
 
 			document.addEventListener('dragstart', function (event) {
 				dragndrop.onStart(event.target);

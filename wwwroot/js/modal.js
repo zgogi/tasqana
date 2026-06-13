@@ -20,30 +20,20 @@ class AbstractModalDialog {
     }
 }
 
-class CategoryCreateModalDialog extends AbstractModalDialog {
+class CategoryEditModalDialog extends AbstractModalDialog {
     constructor(store, formId) {
         super(store, formId);
         this._parentId = null;
+        this._id = null;
         this._title = this.container.querySelector('.value-title');
         this._btnCreate = this.container.querySelector('.btn-create');
+        this._btnSave = this.container.querySelector('.btn-save');
+
         this._btnCreate.addEventListener('click', () => {
             this.store.categories.create({ parent_id: this._parentId, title: this._title.value });
             this.hide();
         });
-    }
 
-    onShow(data) {
-        this._parentId = data.id;
-        this._title.value = "";
-    }
-}
-
-class CategoryEditModalDialog extends AbstractModalDialog {
-    constructor(store, formId) {
-        super(store, formId);
-        this._id = null;
-        this._title = this.container.querySelector('.value-title');
-        this._btnSave = this.container.querySelector('.btn-save');
         this._btnSave.addEventListener('click', () => {
             this.store.categories.save({ id: this._id, title: this._title.value });
             this.hide();
@@ -51,8 +41,11 @@ class CategoryEditModalDialog extends AbstractModalDialog {
     }
 
     onShow(data) {
-        this._id = data.id;
-        this._title.value = this.store.categories.get(data.id).title;
+        this._parentId = data.parentId ?? null;
+        this._id = data.id ?? null;
+        this._title.value = this.store.categories.get(data.id)?.title ?? '';
+        html.setVisible(this._btnCreate, this._id == null);
+        html.setVisible(this._btnSave, this._id != null);
     }
 }
 
@@ -177,7 +170,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
     onShow(data) {
         const todo = this.store.todos.get(data.id);
         this._id = data.id ?? null;
-        this._categoryId = data.categoryid ?? null;
+        this._categoryId = data.categoryid ?? this.store.todos.filter?.category?.id ?? null;
         this._title.value = todo?.title ?? '';
         this._description.value = todo?.description ?? '';
         this._updatePriority(todo?.priority ?? 0);
@@ -217,7 +210,6 @@ class TodoEditModalDialog extends AbstractModalDialog {
 class Modal {
 
     constructor(store) {
-        this.categoryCreate = new CategoryCreateModalDialog(store, 'form-cat-create');
         this.categoryEdit = new CategoryEditModalDialog(store, 'form-cat-edit');
         this.categoryDelete = new CategoryDeleteModalDialog(store, 'form-cat-delete');
         this.todoEdit = new TodoEditModalDialog(store, 'form-todo-edit');

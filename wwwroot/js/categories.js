@@ -111,7 +111,7 @@ class CategoriesStore {
 					</div>
 					<div class="w3-padding w3-dropdown-click fa fa-ellipsis-v">
                         <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0;">
-							<span class="btn-cat-create w3-bar-item w3-button" data-id="${item.id}">Createt</span>
+							<span class="btn-cat-edit w3-bar-item w3-button" data-parent_id="${item.id}">Createt</span>
                             <span class="btn-cat-edit w3-bar-item w3-button" data-id="${item.id}">Edit</span>
                             <span class="btn-cat-delete w3-bar-item w3-button" data-id="${item.id}">Delete</span>
                         </div>
