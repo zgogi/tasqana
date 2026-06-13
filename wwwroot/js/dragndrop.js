@@ -44,11 +44,11 @@ class DragNDrop {
 
         if (this._source.isTodo() && target.isCategory()) {
             this._target = target;
-            this._target.show('.category-block', 'drop-target');
+            this._target.show('.category-item', 'drop-target');
             return true;
         } else if (this._source.isCategory() && target.isCategory()) {
             this._target = target;
-            this._target.show('.category-before', 'drop-target');
+            this._target.show('.category-item', 'drop-before');
             return true;
         } else if (this._source.isTodo() && target.isTodo()) {
             this._target = target;

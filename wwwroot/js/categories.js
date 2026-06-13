@@ -103,8 +103,7 @@ class CategoriesStore {
 			node.dataset.id = item.id;
 			node.className = 'category-node w3-bar-item';
 			node.innerHTML = `
-				<div class="category-before w3-padding w3-hide"></div>
-				<div class="category-block w3-block w3-flex w3-theme-d4" draggable="true">
+				<div class="category-item w3-block w3-flex w3-theme-d4" draggable="true">
 					<div class="category-click w3-block z-clickable w3-left-align w3-padding">
 						<span class="category-title" data-id="${item.id}"></span>
 						<span class="category-count w3-badge w3-white w3-text-black"></span>

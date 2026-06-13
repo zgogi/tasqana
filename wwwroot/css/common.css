@@ -27,13 +27,13 @@
     display: block !important;
 }
 
-td, .todo-item {
+td,.todo-item,.category-item {
     border-top-style: solid;
     border-width: 2px;
     border-color: transparent;
 }
 
-.drop-before td, .drop-before.todo-item {
+.drop-before td, .drop-before.todo-item, .drop-before.category-item {
     border-color: white;
 }
 
