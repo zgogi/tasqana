@@ -25,8 +25,8 @@
         }
     }
 
-    addRow() {
-        this._table.append(this._createRow());
+    addRow(row=null) {
+        this._table.append(this._createRow(row));
     }
 
     clear() { this._table.innerHTML = ""; }
