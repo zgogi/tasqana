@@ -73,18 +73,6 @@ class AppStore {
         this.categories = new CategoriesStore(this, api); 
         this.todos = new TodosStore(this, api);
         this.user = new UserStore(api);
-        this.modal = null; // Editing now
-        this._listeners = [];
-
-        
-    }
-
-    subscribe(listener) {
-        this._listeners.push(listener);
-    }
-
-    notify() {
-        this._listeners.forEach(listener => listener());
     }
 
     update() {
@@ -92,15 +80,5 @@ class AppStore {
         this.categories.select({});
         //this.todos.setFilter({});
     }
-
-    startEdit(target) {
-        this.modal = target;
-        this.notify();
-    }
-
-    
-
-
-
 
 }

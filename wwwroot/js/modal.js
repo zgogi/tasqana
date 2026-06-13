@@ -8,24 +8,15 @@ class AbstractModalDialog {
         const btnCancel = this.container.querySelectorAll('.btn-cancel');
         for (var i = 0; i < btnCancel.length; ++i)
             btnCancel[i].addEventListener('click', () => this.hide());
-
-        this.store.subscribe(() => this.update());
     }
 
-    update() {
-        const target = this.store.modal;
-
-        if (target && target.modal === this.container.id) {
-            this.onShow(target);
-            this.container.classList.add('w3-show');
-        } else {
-            this.container.classList.remove('w3-show');
-        }
+    show(data) {
+        this.onShow(data);
+        this.container.classList.add('w3-show');
     }
 
     hide() {
-        this.store.modal = null;
-        this.store.notify();
+        this.container.classList.remove('w3-show');
     }
 }
 
@@ -190,8 +181,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._title.value = todo?.title ?? '';
         this._description.value = todo?.description ?? '';
         this._updatePriority(todo?.priority ?? 0);
-
-        html.setVisible(this._btnCreate, data.iscreate == true);
+        html.setVisible(this._btnCreate, this._id == null);
         html.setVisible(this._btnSave, this._id != null);
         html.setVisible(this._btnStart, this._id != null && todo.state < 1);
         html.setVisible(this._btnComplete, this._id != null && todo.state < 2);
@@ -223,38 +213,14 @@ class TodoEditModalDialog extends AbstractModalDialog {
 
 }
 
-class CheckEditModalDialog extends AbstractModalDialog {
-    constructor(store, formId) {
-        super(store, formId);
-        this._id = null;
-        this._todoId = null;
-        this._title = this.container.querySelector('.value-title');
-        this._btnCreate = this.container.querySelector('.btn-create');
-        this._btnSave = this.container.querySelector('.btn-save');
-        this._btnDelete = this.container.querySelector('.btn-delete');
 
-        this._btnCreate.addEventListener('click', () => {
-            this.store.todos.checkItemCreate(this._todoId, this._title.value);
-            this.hide();
-        });
+class Modal {
 
-        this._btnSave.addEventListener('click', () => {
-            this.store.todos.checkItemSave(this._id, this._title.value);
-            this.hide();
-        });
-
-        this._btnDelete.addEventListener('click', () => {
-            this.store.todos.checkItemDelete(this._id);
-            this.hide();
-        });
+    constructor(store) {
+        this.categoryCreate = new CategoryCreateModalDialog(store, 'form-cat-create');
+        this.categoryEdit = new CategoryEditModalDialog(store, 'form-cat-edit');
+        this.categoryDelete = new CategoryDeleteModalDialog(store, 'form-cat-delete');
+        this.todoEdit = new TodoEditModalDialog(store, 'form-todo-edit');
     }
 
-    onShow(data) {
-        this._id = data.id ?? null;
-        this._todoId = data.todoid ?? null;
-        this._title.value = (this._id != null) ? this.store.todos.getCheckItem(this._id).title : '';
-        html.setVisible(this._btnCreate, this._todoId != null);
-        html.setVisible(this._btnSave, this._id != null);
-        html.setVisible(this._btnDelete, this._id != null);
-    }
 }

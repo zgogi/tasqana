@@ -150,12 +150,11 @@ class TodosStore {
                     <div class="todo-started fa fa-toggle-right w3-text-yellow w3-hide"></div>
                     <div class="todo-completed fa fa-check-square w3-text-green w3-hide"></div>
                     <div class="todo-title accordion-click w3-block w3-left-align z-clickable"></div>
-                    <div class="w3-btn fa fa-edit" data-modal="form-todo-edit" data-id="${item.id}"></div>
+                    <div class="btn-todo-edit w3-btn fa fa-edit" data-id="${item.id}"></div>
                 </div>
                 <div class="accordion-content w3-bar-item w3-theme-d2 w3-padding w3-hide">
                     <div class="todo-description"></div>
                     <div class="todo-checkitems"></div>
-                    <div class="z-clickable fa fa-plus-square" data-modal="form-check-edit" data-todoid="${item.id}"></div>
                 </div>
                 `;
         }
@@ -164,7 +163,6 @@ class TodosStore {
         <div class="w3-flex" style="align-items:center;">
             <div class="check-mark z-clickable ${this._checkBox(curr.is_completed)}" data-id="${curr.id}"></div>
             <div class="w3-block w3-margin-left">${curr.title}</div>
-            <div class="fa fa-edit z-clickable" data-modal="form-check-edit" data-id="${curr.id}"></div>
         </div>`, "");
 
         const title = node.querySelector(".todo-title");

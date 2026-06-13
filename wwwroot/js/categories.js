@@ -8,16 +8,16 @@ class CategoriesStore {
 		this.selected = null;
 	}
 
-	update(clear=false) {
+	update(rebuild=false) {
 		this.api.get(`/categories/tree`)
 			.then(resp => {
 				this.items = resp;
-				this.render(clear);
+				this.render(rebuild);
 			});
 	}
 
 	select(filter) {
-		html.removeClasses(".selected", "selected");
+		html.removeClasses('.selected', 'selected');
 		if (filter.categoryId != undefined) {
 			this.selected = this.get(filter.categoryId);
 			this.parent.todos.setFilter({ category: this.selected });
@@ -25,38 +25,38 @@ class CategoriesStore {
 		} else if (filter.priority != undefined) {
 			this.selected = null;
 			this.parent.todos.setFilter(filter);
-			html.addClasses(`#category-priority`, "selected");
+			html.addClasses('#category-priority', 'selected');
 		} else if (filter.state == 1) {
 			this.selected = null;
 			this.parent.todos.setFilter(filter);
-			html.addClasses(`#category-started`, "selected");
+			html.addClasses('#category-started', 'selected');
 		} else if (filter.state == 2) {
 			this.selected = null;
 			this.parent.todos.setFilter(filter);
-			html.addClasses(`#category-completed`, "selected");
+			html.addClasses('#category-completed', 'selected');
 		} else {
 			this.selected = null;
 			this.parent.todos.setFilter(filter);
-			html.addClasses(`#category-unsorted`, "selected");
+			html.addClasses('#category-unsorted', 'selected');
 		}
 	}
 
 	create(data) {
-		this.api.post(`/categories/create`, data)
+		this.api.post('/categories/create', data)
 			.then(resp => {
 				this.update(true);
 			});
 	}
 
 	save(data) {
-		this.api.post(`/categories/update`, data)
+		this.api.post('/categories/update', data)
 			.then(resp => {
-				this.update();
+				this.update(true);
 			});
 	}
 
 	delete(data) {
-		this.api.post(`/categories/delete`, data)
+		this.api.post('/categories/delete', data)
 			.then(resp => {
 				this.update(true);
 				this.select(null);
@@ -64,7 +64,7 @@ class CategoriesStore {
 	}
 
 	moveBefore(id, beforeId) {
-		this.api.post(`/categories/move`, {id: id, before_id: beforeId})
+		this.api.post('/categories/move', {id: id, before_id: beforeId})
 			.then(resp => {
 				this.items = resp;
 				this.render(true);
@@ -87,22 +87,21 @@ class CategoriesStore {
 
 	render(clear = false) {
 		if (clear)
-			document.getElementById("categories-list").innerHTML = "";
+			document.getElementById('categories-list').innerHTML = "";
 		this.items.forEach(todo => this._renderItem(todo));
 	}
 
 	_renderItem(item, container=null) {
 		if (container === null) 
-			container = document.getElementById("categories-list");
+			container = document.getElementById('categories-list');
 
 		var node = container.querySelector(`.category-node[data-id="${item.id}"]`);
 		const isNew = !node;
 
 		if (isNew) {
-			node = document.createElement("div");
+			node = document.createElement('div');
 			node.dataset.id = item.id;
-			//node.draggable = true;
-			node.className = "category-node w3-bar-item";
+			node.className = 'category-node w3-bar-item';
 			node.innerHTML = `
 				<div class="category-before w3-padding w3-hide"></div>
 				<div class="category-block w3-block w3-flex w3-theme-d4" draggable="true">
@@ -112,9 +111,9 @@ class CategoriesStore {
 					</div>
 					<div class="w3-padding w3-dropdown-click fa fa-ellipsis-v">
                         <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0;">
-							<span class="w3-bar-item w3-button" data-modal="form-cat-create" data-id="${item.id}">Createt</span>
-                            <span class="w3-bar-item w3-button" data-modal="form-cat-edit" data-id="${item.id}">Edit</span>
-                            <span class="w3-bar-item w3-button" data-modal="form-cat-delete" data-id="${item.id}">Delete</span>
+							<span class="btn-cat-create w3-bar-item w3-button" data-id="${item.id}">Createt</span>
+                            <span class="btn-cat-edit w3-bar-item w3-button" data-id="${item.id}">Edit</span>
+                            <span class="btn-cat-delete w3-bar-item w3-button" data-id="${item.id}">Delete</span>
                         </div>
                     </div>
 				</div>
@@ -122,14 +121,14 @@ class CategoriesStore {
 				
 			`;
 
-			var subs = node.querySelector(".category-subnodes");
+			var subs = node.querySelector('.category-subnodes');
 			item.sub_categories.forEach(it => this._renderItem(it, subs));
 
 		}
 
-		node.querySelector(".category-title").innerText = item.title;
+		node.querySelector('.category-title').innerText = item.title;
 
-		const todo_count = node.querySelector(".category-count");
+		const todo_count = node.querySelector('.category-count');
 		todo_count.innerText = item.todo_count;
 		html.setVisible(todo_count, item.todo_count > 0);
 
