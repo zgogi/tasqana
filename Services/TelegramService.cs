@@ -77,7 +77,7 @@ namespace Tasqana.Services
             } 
             else if (message.Text != null)
             {
-                await _todos.InsertAsync(message.User, TodoCreateDTO.FromString(message.Text));
+                await _todos.InsertAsync(message.User, TodoDTO.FromString(message.Text));
                 return true;
             } else
             {

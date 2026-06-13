@@ -4,47 +4,6 @@ using static Tasqana.Models.http.Telegram;
 namespace Tasqana.Models.http
 {
    
-    public class TodoCreateDTO
-    {
-        public string title { get; set; } = null!;
-        public string? description { get; set; }
-        public long? category_id { get; set; }
-        public int? priority { get; set; }
-
-        public TodoCreateDTO() { }
-
-        public static TodoCreateDTO FromString(string title)
-        {
-            var lines = title.Split("\n");
-            if (lines.Length == 1)
-                lines = title.Split(". ");
-            if (lines.Length == 1)
-                return new TodoCreateDTO { title = title };
-
-            return new TodoCreateDTO
-            {
-                title = lines[0].Trim(),
-                description = lines
-                    .Take(new Range(1, lines.Length))
-                    .Aggregate((current, next) => current + "\n" + next.Trim()),
-            };
-        }
-
-
-
-        public Todo ToTodo(Models.User user)
-        {
-            return new Models.Todo
-            {
-                UserId = user.Id,
-                CategoryId = this.category_id,
-                Title = this.title,
-                Description = this.description?.Trim()?.NullIfEmpty(),
-                Priority = this.priority.ToEnum<Priority>() ?? Priority.Lowest,
-            };
-        } 
-    }
-
     public class TodoDeleteDTO
     {
         public long id { get; set; }
@@ -52,7 +11,7 @@ namespace Tasqana.Models.http
 
     public class TodoDTO
     {
-        public long id { get; set; }
+        public long? id { get; set; }
         public string? title { get; set; } = null;
         public string? description { get; set; } = null;
         public long? category_id { get; set; } = null;
@@ -74,6 +33,35 @@ namespace Tasqana.Models.http
             check_items = source.CheckItems.Select(e => new CheckItemDTO(e));
             created_at = source.CreatedAt;
             modified_at = source.UpdatedAt;
+        }
+
+        public Todo ToTodo(Models.User user)
+        {
+            return new Models.Todo
+            {
+                UserId = user.Id,
+                CategoryId = this.category_id,
+                Title = this.title ?? "",
+                Description = this.description?.Trim()?.NullIfEmpty(),
+                Priority = this.priority.ToEnum<Priority>() ?? Priority.Lowest,
+            };
+        }
+
+        public static TodoDTO FromString(string title)
+        {
+            var lines = title.Split("\n");
+            if (lines.Length == 1)
+                lines = title.Split(". ");
+            if (lines.Length == 1)
+                return new TodoDTO { title = title };
+
+            return new TodoDTO
+            {
+                title = lines[0].Trim(),
+                description = lines
+                    .Take(new Range(1, lines.Length))
+                    .Aggregate((current, next) => current + "\n" + next.Trim()),
+            };
         }
     }
 

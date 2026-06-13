@@ -88,28 +88,22 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._btnCheckListFromText = this.container.querySelector('.btn-checklist-fromtext');
 
         this._btnCreate.addEventListener('click', () => {
-            this.store.todos.create({
-                category_id: this._categoryId,
-                title: this._title.value,
-                description: this._description.value,
-                priority: this._priority
-            });
+            const item = this._getItem();
+            this.store.todos.create(item);
             this.hide();
         });
 
         this._btnStart.addEventListener('click', () => {
-            this.store.todos.save({
-                id: this._id,
-                state: 1
-            }, true);
+            const item = this._getItem();
+            item.state = 1;
+            this.store.todos.save(item, true);
             this.hide();
         });
 
         this._btnComplete.addEventListener('click', () => {
-            this.store.todos.save({
-                id: this._id,
-                state: 2
-            }, true);
+            const item = this._getItem();
+            item.state = 2;
+            this.store.todos.save(item, true);
             this.hide();
         });
 

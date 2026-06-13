@@ -22,7 +22,7 @@ namespace Tasqana.Controllers
         }
 
         [HttpPost, Route("create")]
-        public async Task<ActionResult> Create(Models.http.TodoCreateDTO form)
+        public async Task<ActionResult> Create(Models.http.TodoDTO form)
         {
             return await WithAuthenticationAsync(async user =>
             {

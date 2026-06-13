@@ -17,27 +17,35 @@ namespace Tasqana.Services
             _checkitems = checkitems;
         }
 
-        public async Task<Models.Todo> InsertAsync(Models.User user, Models.http.TodoCreateDTO form)
+        public async Task<Models.http.TodoDTO> InsertAsync(Models.User user, Models.http.TodoDTO form)
         {
             var other = await _todos.GetByCategoryAsync(user, form.category_id, true);
             var todo = form.ToTodo(user);
             todo.Order = other.Count;
-            return await _todos.InsertAsync(todo);
+
+            if (form.check_items != null)
+            {
+                _checkitems.UpdateList(todo, form.check_items.ToList());
+            }
+
+            var result = await _todos.InsertAsync(todo);
+            return new Models.http.TodoDTO(result);
         }
 
-        public async Task<Models.http.TodoDTO> UpdateAsync(Models.User user, Models.http.TodoDTO source)
+        public async Task<Models.http.TodoDTO> UpdateAsync(Models.User user, Models.http.TodoDTO form)
         {
-            var item = await _todos.GetByIdAsync(user, source.id, false);
+            if (!form.id.HasValue) throw new NotFoundException();
+            var item = await _todos.GetByIdAsync(user, form.id ?? 0, false);
             if (item == null) { throw new NotFoundException(); }
-            if (source.title != null) item.Title = source.title;
-            if (source.description != null) item.Description = source.description;
-            if (source.category_id != null) item.CategoryId = source.category_id;
-            if (source.state != null) item.State = (Models.TodoState)source.state;
-            if (source.priority != null) item.Priority = (Models.Priority)source.priority;
+            if (form.title != null) item.Title = form.title;
+            if (form.description != null) item.Description = form.description;
+            if (form.category_id != null) item.CategoryId = form.category_id;
+            if (form.state != null) item.State = (Models.TodoState)form.state;
+            if (form.priority != null) item.Priority = (Models.Priority)form.priority;
             
-            if (source.check_items != null)
+            if (form.check_items != null)
             {
-                _checkitems.UpdateList(item, source.check_items.ToList());
+                _checkitems.UpdateList(item, form.check_items.ToList());
             }
 
             await _todos.SaveChangesAsync();
