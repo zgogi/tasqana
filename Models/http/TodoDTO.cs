@@ -81,10 +81,12 @@ namespace Tasqana.Models.http
     {
         public string user_name { get; set; } = null!;
         public string? category { get; set; }
+        public int order { get; set; }
         public TodoExtDTO(Todo source):base(source)
         {
             user_name = source.User.Name;
             category = source.Category?.Title;
+            order = source.Order;
         }
     }
 

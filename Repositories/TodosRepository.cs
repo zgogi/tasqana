@@ -15,6 +15,7 @@ namespace Tasqana.Repositories
             return await Query(asNoTracking)
                 .Include(c => c.User)
                 .Include(c => c.Category)
+                .OrderBy(c => c.CategoryId)
                 .ToListAsync();
         }
 

@@ -92,6 +92,13 @@ class TodosStore {
         //this.parent.categories.select(categoryId);
     }
 
+    move(itemId, beforeId) {
+        this.api.post(`/todos/move`, { id:itemId, before_id: beforeId })
+            .then(resp => {
+                this.update(true);
+            });
+    }
+
     checkItemToggle(checkId) {
         this.api.post(`/todos/checklist/toggle`, { id: checkId })
             .then(resp => { this.update(); });
@@ -138,8 +145,7 @@ class TodosStore {
            // node.draggable = true;
             node.className = "todo-node accordion w3-bar-item";
             node.innerHTML = `
-                <div class="todo-before w3-padding w3-hide"></div>
-                <div class="w3-block w3-theme-d4 w3-flex w3-padding" style="align-items:center; gap:8px;" draggable="true">
+                <div class="todo-item w3-block w3-theme-d4 w3-flex w3-padding" style="align-items:center; gap:8px;" draggable="true">
                     ${this._renderCategory(item)}
                     <div class="todo-started fa fa-toggle-right w3-text-yellow w3-hide"></div>
                     <div class="todo-completed fa fa-check-square w3-text-green w3-hide"></div>

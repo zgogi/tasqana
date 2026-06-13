@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Tasqana.Extensions;
+using Tasqana.Models;
 using Tasqana.Repositories;
 
 namespace Tasqana.Services
@@ -16,20 +17,11 @@ namespace Tasqana.Services
             _checkitems = checkitems;
         }
 
-        public async Task<Models.Todo> InsertAsync(Models.User user, long? categoryId, string title, string? description)
-        {
-            var todo = new Models.Todo { 
-                UserId = user.Id,
-                CategoryId = categoryId,
-                Title = title, 
-                Description = description
-            };
-            return await _todos.InsertAsync( todo );
-        }
-
         public async Task<Models.Todo> InsertAsync(Models.User user, Models.http.TodoCreateDTO form)
         {
+            var other = await _todos.GetByCategoryAsync(user, form.category_id, true);
             var todo = form.ToTodo(user);
+            todo.Order = other.Count;
             return await _todos.InsertAsync(todo);
         }
 
@@ -82,6 +74,7 @@ namespace Tasqana.Services
 
             var items = await _todos.GetByCategoryAsync(user, item.CategoryId, false);
             items.MoveBefore(form.id, form.before_id);
+          
             await _todos.SaveChangesAsync();
             return items.Select(e => new Models.http.TodoDTO(e));
         }

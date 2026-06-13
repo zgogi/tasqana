@@ -6,18 +6,22 @@ class DragItem {
         this.node = node;
     }
 
-    isCategory() { return this._type === "category"; }
-    isTodo() { return this._type === "todo"; }
+    isCategory() { return this._type === 'category'; }
+    isTodo() { return this._type === 'todo'; }
 
-    show(onNode) {
+    show(onNode, className) {
         const node = this.node.querySelector(onNode);
         if (node == null) return;
-        node.classList.add("drop-target");
+        node.classList.add(className);
     }
 
     hide() {
-        const node = this.node.querySelector(".drop-target");
-        node.classList.remove("drop-target");
+        const node1 = this.node.querySelector('.drop-target');
+        if (node1 != null)
+            node1.classList.remove('drop-target');
+        const node2 = this.node.querySelector('.drop-before');
+        if (node2 != null)
+            node2.classList.remove('drop-before');
     }
 }
 
@@ -40,11 +44,15 @@ class DragNDrop {
 
         if (this._source.isTodo() && target.isCategory()) {
             this._target = target;
-            this._target.show(".category-block", "drop-target");
+            this._target.show('.category-block', 'drop-target');
             return true;
         } else if (this._source.isCategory() && target.isCategory()) {
             this._target = target;
-            this._target.show(".category-before", "drop-target");
+            this._target.show('.category-before', 'drop-target');
+            return true;
+        } else if (this._source.isTodo() && target.isTodo()) {
+            this._target = target;
+            this._target.show('.todo-item', 'drop-before');
             return true;
         }
         return false;
@@ -64,43 +72,25 @@ class DragNDrop {
             this._store.todos.moveToCategory(this._source.id, this._target.id);
         } else if (this._source.isCategory() && this._target.isCategory()) {
             this._store.categories.moveBefore(this._source.id, this._target.id);
+        } else if (this._source.isTodo() && this._target.isTodo()) {
+            this._store.todos.move(this._source.id, this._target.id);
         }
         this._source = null;
         this._target = null;
     }
 
     _createDragItem(node) {
-        const nodeCat = node?.closest(".category-node");
-        const nodeTodo = node?.closest(".todo-node");
-        if (nodeCat != null) {
-            return new DragItem(nodeCat.dataset.id, "category", nodeCat);
-        } else if (nodeTodo != null) {
-            return new DragItem(nodeTodo.dataset.id, "todo", nodeTodo);
-        } else {
-            return null;
-        }
-    }
+        const nodeTodo = node?.closest('.todo-node');
+        if (nodeTodo != null) 
+            return new DragItem(nodeTodo.dataset.id, 'todo', nodeTodo);
 
-   /* _getNodeInfo(target) {
-        const category = target.closest(".category-title");
-        const todo = target.closest(".todo-node");
-        if (category != null) {
-            return {
-                target: target,
-                node: category,
-                id: category.dataset.id,
-                type: "category"
-            };
-        } else if (todo != null) {
-            return {
-                target: target,
-                node: todo,
-                id: todo.dataset.id,
-                type: "todo"
-            };
-        }
-            
-    }*/
+        const nodeCat = node?.closest('.category-node');
+        if (nodeCat != null) 
+            return new DragItem(nodeCat.dataset.id, 'category', nodeCat);
+
+        return null;
+        
+    }
 
 }
 
