@@ -62,9 +62,10 @@ if (app.Environment.IsDevelopment())
     app.UseForwardedHeaders();
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 
