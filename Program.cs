@@ -11,13 +11,13 @@ using Tasqana.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
+/*builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     // Очищаем списки известных сетей, так как в Docker IP-адреса контейнеров динамические
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
-});
+});*/
 
 // Add services to the container.
 builder.Services.AddDbContext<TaskanaDb>();
@@ -59,7 +59,7 @@ app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseForwardedHeaders();
+    //app.UseForwardedHeaders();
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseHttpsRedirection();
