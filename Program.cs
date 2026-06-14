@@ -1,3 +1,5 @@
+using Amazon.S3;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Tasqana.Clients;
@@ -6,10 +8,20 @@ using Tasqana.Models;
 using Tasqana.Repositories;
 using Tasqana.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // Очищаем списки известных сетей, так как в Docker IP-адреса контейнеров динамические
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<TaskanaDb>();
+builder.Services.AddSingleton<IAmazonS3>(sp => S3Client.Create(builder));
 
 builder.Services.AddScoped<TelegramClient>();
 
@@ -26,6 +38,7 @@ builder.Services.AddScoped<CategoriesService>();
 builder.Services.AddScoped<TodosService>();
 builder.Services.AddScoped<TelegramService>();
 builder.Services.AddScoped<CheckItemService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -46,6 +59,7 @@ app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseForwardedHeaders();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

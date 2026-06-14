@@ -12,6 +12,23 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  s3:
+    image: minio/minio:RELEASE.2023-11-01T18-37-25Z
+    container_name: tasqana_s3
+    restart: always
+    environment:
+      MINIO_ROOT_USER: minio_admin_user      
+      MINIO_ROOT_PASSWORD: super_secure_s3_password_123
+      MINIO_SERVER_URL: "https://s3.example.com"
+      MINIO_BROWSER_REDIRECT_URL: "https://s3.console.example.com"
+    ports:
+      # Пробрасываем порты на внешний IP сервера для отладки
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - s3_data:/data
+    command: server /data --console-address ":9001"
+
   webapi:
     build:
       context: . 
@@ -35,4 +52,4 @@ services:
       - db
 
 volumes:
-  pgdata:
+  s3_data: 
