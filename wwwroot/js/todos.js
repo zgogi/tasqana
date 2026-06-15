@@ -13,6 +13,19 @@ class TodoFilter {
         if (this.state != null) result.push(`state=${this.state}`);
         return result.join('&');
     }
+
+    getTitle() {
+        if (this.category != null)
+            return this.category.title;
+        else if (this.priority != null)
+            return "By priority";
+        else if (this.state === 1) 
+            return "Started";
+        else if (this.state === 2)
+            return "Completed";
+        else
+            return "Uncategorized";
+    }
 }
 
 
@@ -136,14 +149,15 @@ class TodosStore {
 
     _renderItem(item) {
         const container = document.getElementById('todos-list');
+        document.getElementById('title-todos').innerText = this.filter.getTitle();
         var node = container.querySelector(`.todo-node[data-id="${item.id}"]`);
         const isNew = !node;
 
         if (isNew) {
-            node = document.createElement("div");
+            node = document.createElement('div');
             node.dataset.id = item.id;
            // node.draggable = true;
-            node.className = "todo-node accordion w3-bar-item";
+            node.className = 'todo-node accordion w3-bar-item';
             node.innerHTML = `
                 <div class="todo-item w3-block w3-theme-d4 w3-flex w3-padding" style="align-items:center; gap:8px;" draggable="true">
                     ${this._renderCategory(item)}

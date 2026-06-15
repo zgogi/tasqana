@@ -87,7 +87,7 @@ class CategoriesStore {
 
 	render(clear = false) {
 		if (clear)
-			document.getElementById('categories-list').innerHTML = "";
+			document.getElementById('categories-list').innerHTML = '';
 		this.items.forEach(todo => this._renderItem(todo));
 	}
 
