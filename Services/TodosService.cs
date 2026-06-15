@@ -17,7 +17,7 @@ namespace Tasqana.Services
             _checkitems = checkitems;
         }
 
-        public async Task<Models.http.TodoDTO> InsertAsync(Models.User user, Models.http.TodoDTO form)
+        public async Task<Models.Todo> InsertAsync(Models.User user, Models.http.TodoDTO form)
         {
             var other = await _todos.GetByCategoryAsync(user, form.category_id, true);
             var todo = form.ToTodo(user);
@@ -29,10 +29,10 @@ namespace Tasqana.Services
             }
 
             var result = await _todos.InsertAsync(todo);
-            return new Models.http.TodoDTO(result);
+            return result;
         }
 
-        public async Task<Models.http.TodoDTO> UpdateAsync(Models.User user, Models.http.TodoDTO form)
+        public async Task<Models.Todo> UpdateAsync(Models.User user, Models.http.TodoDTO form)
         {
             if (!form.id.HasValue) throw new NotFoundException();
             var item = await _todos.GetByIdAsync(user, form.id ?? 0, false);
@@ -49,7 +49,7 @@ namespace Tasqana.Services
             }
 
             await _todos.SaveChangesAsync();
-            return new Models.http.TodoDTO(item);
+            return item;
         }
 
         public async Task<IEnumerable<Models.http.TodoExtDTO>> GetAllAsync()
@@ -58,7 +58,7 @@ namespace Tasqana.Services
             return result.Select(e => new Models.http.TodoExtDTO(e));
         }
 
-        public async Task<IEnumerable<Models.http.TodoDTO>> GetFilteredAsync(Models.User user, long? categoryId, bool priority, Models.TodoState? state)
+        public async Task<IEnumerable<Models.Todo>> GetFilteredAsync(Models.User user, long? categoryId, bool priority, Models.TodoState? state)
         {
             var result = new List<Models.Todo>();
             if (priority)
@@ -67,7 +67,7 @@ namespace Tasqana.Services
                 result = await _todos.GetByStateAsync(user, state ?? Models.TodoState.Completed);
             else
                 result = await _todos.GetByCategoryAsync(user, categoryId);
-            return result.Select(e => new Models.http.TodoDTO(e));
+            return result;
         }
 
         public async Task DeleteAsync(Models.User user, long id)
@@ -75,7 +75,7 @@ namespace Tasqana.Services
             await _todos.DeleteAsync(user, id);
         }
 
-        public async Task<IEnumerable<Models.http.TodoDTO>> MoveAsync(Models.User user, Models.http.ReorderDTO form)
+        public async Task<IEnumerable<Models.Todo>> MoveAsync(Models.User user, Models.http.ReorderDTO form)
         {
             var item = await _todos.GetByIdAsync(user, form.id, true);
             if (item == null) throw new NotFoundException();
@@ -84,7 +84,7 @@ namespace Tasqana.Services
             items.MoveBefore(form.id, form.before_id);
           
             await _todos.SaveChangesAsync();
-            return items.Select(e => new Models.http.TodoDTO(e));
+            return items;
         }
 
     }

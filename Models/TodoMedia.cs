@@ -7,6 +7,8 @@
         public string? Title { get; set; }
         public string FileName { get; set; } = null!;
         public long FileSize { get; set; }
+        public string? PreviewFileName { get; set; } = null!;
+        public long? PreviewFileSize { get; set; }
         public string? MimeType { get; set; }
 
         public Todo Todo { get; set; } = null!;

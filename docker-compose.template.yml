@@ -21,10 +21,13 @@ services:
       MINIO_ROOT_PASSWORD: super_secure_s3_password_123
       MINIO_SERVER_URL: "https://s3.example.com"
       MINIO_BROWSER_REDIRECT_URL: "https://s3.console.example.com"
+      S3Settings__Endpoint": "https://s3.example.com"
+      S3Settings__BucketName": "tasqana-s3"
+      S3Settings__AccessKey": "minio_admin_user"
+      S3Settings__SecretKey": "super_secure_s3_password_123"
     ports:
-      # Пробрасываем порты на внешний IP сервера для отладки
-      - "9000:9000"
-      - "9001:9001"
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
     volumes:
       - s3_data:/data
     command: server /data --console-address ":9001"

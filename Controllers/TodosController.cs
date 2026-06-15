@@ -2,6 +2,7 @@
 using Tasqana.Models;
 using Tasqana.Services;
 using Tasqana.Extensions;
+using Tasqana.Models.http;
 
 namespace Tasqana.Controllers
 {
@@ -10,15 +11,18 @@ namespace Tasqana.Controllers
     {
         private readonly TodosService _todos;
         private readonly CheckItemService _checkItems;
+        private readonly IFileStorageService _files;
 
         public TodosController(
             SessionsService sessions,
             TodosService todos,
-            CheckItemService checkItems
+            CheckItemService checkItems,
+            IFileStorageService files
             ) : base(sessions)
         {
             _todos = todos;
             _checkItems = checkItems;
+            _files = files;
         }
 
         [HttpPost, Route("create")]
@@ -27,7 +31,7 @@ namespace Tasqana.Controllers
             return await WithAuthenticationAsync(async user =>
             {
                 var todo = await _todos.InsertAsync(user, form);
-                return Ok(todo);
+                return Ok(new Models.http.TodoDTO(todo, e => _files.GetUrl(e)));
             });
         }
 
@@ -37,7 +41,7 @@ namespace Tasqana.Controllers
             return await WithAuthenticationAsync(async user =>
             {
                 var todo = await _todos.UpdateAsync(user, form);
-                return Ok(todo);
+                return Ok(new Models.http.TodoDTO(todo, e => _files.GetUrl(e)));
             });
         }
 
@@ -57,7 +61,7 @@ namespace Tasqana.Controllers
             return await WithAuthenticationAsync(async user =>
             {
                 var result = await _todos.MoveAsync(user, form);
-                return Ok(result);
+                return Ok(result.Select(e => new TodoDTO(e, f => _files.GetUrl(f))));
             });
         }
 
@@ -69,8 +73,9 @@ namespace Tasqana.Controllers
                 var categoryId = ReadQueryLong("category_id");
                 var priority = ReadQueryBool("priority");
                 var state = ReadQueryInt("state");
-                var result = await _todos.GetFilteredAsync(user, categoryId, priority == true, state.ToEnum<TodoState>());
-                return Ok(result);
+                var todos = await _todos.GetFilteredAsync(user, categoryId, priority == true, state.ToEnum<TodoState>());
+                var tododtos = todos.Select(e => new Models.http.TodoDTO(e, f => _files.GetUrl(f)));
+                return Ok(tododtos);
             });
 
         }

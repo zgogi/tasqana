@@ -125,6 +125,14 @@
 			</div>
 		</div>
 	</div>
+	<div id="form-image" class="w3-modal">
+		<div class="w3-modal-content w3-animate-zoom w3-round-xlarge w3-theme-d4">
+			<div class="w3-conta5iner">
+				<img src="" class="content w3-image w3-round-xlarge" />
+				<div class="w3-display-topright btn-cancel w3-btn w3-theme-d4 w3-padding w3-round-xlarge fa fa-close"></div>
+			</div>
+		</div>
+	</div>
 
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
@@ -138,29 +146,30 @@
 			document.addEventListener('click', function (event) {
 				subsribeTo(event, '.category-click', node => {
 					const id = node.closest('.category-node').dataset.id;
-					store.categories.select({categoryId:id});
+					store.categories.select({ categoryId: id });
 				});
 				subsribeTo(event, '.check-mark', node => { store.todos.checkItemToggle(node.dataset.id); });
-                subsribeTo(event, '.btn-cat-edit', node => { modal.categoryEdit.show({ id: node.dataset.id, parentId: node.dataset.parent_id }); })
-				subsribeTo(event, '.btn-cat-delete', node => { modal.categoryDelete.show({ id: node.dataset.id }); })
-                subsribeTo(event, '.btn-todo-edit', node => { modal.todoEdit.show({ id: node.dataset.id }); })
+				subsribeTo(event, '.btn-cat-edit', node => { modal.categoryEdit.show({ id: node.dataset.id, parentId: node.dataset.parent_id }); });
+				subsribeTo(event, '.btn-cat-delete', node => { modal.categoryDelete.show({ id: node.dataset.id }); });
+				subsribeTo(event, '.btn-todo-edit', node => { modal.todoEdit.show({ id: node.dataset.id }); });
+				subsribeTo(event, 'img.media-preview', node => { modal.image.show({ src: node.src }); });
 			});
 
 			document.getElementById('category-unsorted').addEventListener('click', function () {
 				store.categories.select({});
 			});
 
-            document.getElementById('category-priority').addEventListener('click', function () {
-				store.categories.select({priority:1});
+			document.getElementById('category-priority').addEventListener('click', function () {
+				store.categories.select({ priority: 1 });
 			});
 
-            document.getElementById('category-started').addEventListener('click', function () {
-                store.categories.select({ state: 1 });
-            });
+			document.getElementById('category-started').addEventListener('click', function () {
+				store.categories.select({ state: 1 });
+			});
 
-            document.getElementById('category-completed').addEventListener('click', function () {
-                store.categories.select({ state: 2 });
-            });
+			document.getElementById('category-completed').addEventListener('click', function () {
+				store.categories.select({ state: 2 });
+			});
 
 
 			document.addEventListener('dragstart', function (event) {

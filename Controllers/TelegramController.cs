@@ -25,16 +25,23 @@ namespace Tasqana.Controllers
         [HttpPost, Route("webhook")]
         public async Task<ActionResult> WebHook(Models.http.Telegram.Update update)
         {
-            var secret = HttpContext.Request.Headers
-                   .SingleOrDefault(v => v.Key.ToLower() == "x-telegram-bot-api-secret-token")
-                   .Value
-                   .FirstOrDefault();
-            if (secret != _secret) return Unauthorized();
+            try
+            {
+                var secret = HttpContext.Request.Headers
+                                   .SingleOrDefault(v => v.Key.ToLower() == "x-telegram-bot-api-secret-token")
+                                   .Value
+                                   .FirstOrDefault();
+                if (secret != _secret) return Unauthorized();
 
-            if (update.message == null) return Ok();
-            var user = await _telegram.GetOrCreateUserAsync(update.message);
-            if (user == null) return Ok();
-            await _telegram.ProcessMessageAsync(user, update.message, HttpContext);
+                if (update.message == null) return Ok();
+                var user = await _telegram.GetOrCreateUserAsync(update.message);
+                if (user == null) return Ok();
+                await _telegram.ProcessMessageAsync(user, update.message, HttpContext);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Received from Telegram: "+ex.Message);
+            }
             return Ok();
         }
 

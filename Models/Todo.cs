@@ -14,6 +14,7 @@
         public Category Category { get; set; } = null!;
 
         public List<CheckItem> CheckItems { get; set; } = new List<CheckItem>();
+        public List<TodoMedia> Media { get; set; } = new List<TodoMedia>();
 
     }
 

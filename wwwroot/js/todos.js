@@ -11,7 +11,7 @@ class TodoFilter {
         if (this.category != null) result.push(`category_id=${this.category.id}`);
         if (this.priority != null) result.push(`priority=${this.priority}`);
         if (this.state != null) result.push(`state=${this.state}`);
-        return result.join("&");
+        return result.join('&');
     }
 }
 
@@ -121,7 +121,7 @@ class TodosStore {
 
     render(clear = false) {
         if (clear)
-            document.getElementById("todos-list").innerHTML = "";
+            document.getElementById('todos-list').innerHTML = '';
         this.items.forEach(todo => this._renderItem(todo));
     }
 
@@ -135,7 +135,7 @@ class TodosStore {
     }
 
     _renderItem(item) {
-        const container = document.getElementById("todos-list");
+        const container = document.getElementById('todos-list');
         var node = container.querySelector(`.todo-node[data-id="${item.id}"]`);
         const isNew = !node;
 
@@ -154,6 +154,7 @@ class TodosStore {
                 </div>
                 <div class="accordion-content w3-bar-item w3-theme-d2 w3-padding w3-hide">
                     <div class="todo-description"></div>
+                    <div class="todo-media"></div>
                     <div class="todo-checkitems"></div>
                 </div>
                 `;
@@ -163,22 +164,28 @@ class TodosStore {
         <div class="w3-flex" style="align-items:center;">
             <div class="check-mark z-clickable ${this._checkBox(curr.is_completed)}" data-id="${curr.id}"></div>
             <div class="w3-block w3-margin-left">${curr.title}</div>
-        </div>`, "");
+        </div>`, '');
 
-        const title = node.querySelector(".todo-title");
+        const media = item.media.reduce((acc, curr) => acc + `
+        <div>
+            <img src="${curr.url}" class="w3-image w3-round-xlarge">
+        </div>`, '');
+
+        const title = node.querySelector('.todo-title');
 
         title.innerText = item.title;
-        node.querySelector(".todo-description").innerText = item.description;
-        node.querySelector(".todo-checkitems").innerHTML = checkItems;
+        node.querySelector('.todo-description').innerText = item.description;
+        node.querySelector('.todo-checkitems').innerHTML = checkItems;
+        node.querySelector('.todo-media').innerHTML = media;
 
-        html.setClass(title, item.priority == 0, "priority-0");
-        html.setClass(title, item.priority == 1, "priority-1");
-        html.setClass(title, item.priority == 2, "priority-2");
-        html.setClass(title, item.priority == 3, "priority-3");
-        html.setClass(title, item.priority == 4, "priority-4");
+        html.setClass(title, item.priority == 0, 'priority-0');
+        html.setClass(title, item.priority == 1, 'priority-1');
+        html.setClass(title, item.priority == 2, 'priority-2');
+        html.setClass(title, item.priority == 3, 'priority-3');
+        html.setClass(title, item.priority == 4, 'priority-4');
 
-        html.setVisible(node.querySelector(".todo-started"), item.state == 1);
-        html.setVisible(node.querySelector(".todo-completed"), item.state == 2);
+        html.setVisible(node.querySelector('.todo-started'), item.state == 1);
+        html.setVisible(node.querySelector('.todo-completed'), item.state == 2);
 
         if (isNew) {
             container.append(node);
@@ -187,18 +194,18 @@ class TodosStore {
 
     _checkBox(value) {
         if (value)
-            return "fa fa-check-square-o";
+            return 'fa fa-check-square-o';
         else
-            return "fa fa-square-o";
+            return 'fa fa-square-o';
     }
 
     _renderCategory(item) {
         if (this.filter.category == null) {
             const cat = this.parent.categories.get(item.category_id);
-            if (cat == null) return "";
+            if (cat == null) return '';
             return `<div class="todo-category">${cat.title}</div>`;
         } else {
-            return "";
+            return '';
         }
     }
 

@@ -201,13 +201,23 @@ class TodoEditModalDialog extends AbstractModalDialog {
 
 }
 
+class ImageModalDialog extends AbstractModalDialog {
+    constructor(store, formId) {
+        super(store, formId);
+        this._image = this.container.querySelector(".content")
+    }
 
+    onShow(data) {
+        this._image.src = data.src;
+    }
+}
 class Modal {
 
     constructor(store) {
         this.categoryEdit = new CategoryEditModalDialog(store, 'form-cat-edit');
         this.categoryDelete = new CategoryDeleteModalDialog(store, 'form-cat-delete');
         this.todoEdit = new TodoEditModalDialog(store, 'form-todo-edit');
+        this.image = new ImageModalDialog(store, "form-image");
     }
 
 }

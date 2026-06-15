@@ -20,9 +20,9 @@ namespace Tasqana.Models.http
         public int? state { get; set; }
         public int? priority { get; set; }
         public IEnumerable<CheckItemDTO> check_items { get; set; } = new List<CheckItemDTO>();
-
+        public IEnumerable<MediaDTO> media { get; set; } = new List<MediaDTO>();
         public TodoDTO() { }
-        public TodoDTO(Todo source)
+        public TodoDTO(Todo source, Func<string,string>? fileToUrl=null)
         {
             id = source.Id;
             title = source.Title;
@@ -31,6 +31,8 @@ namespace Tasqana.Models.http
             state = ((int)source.State);
             priority = ((int)source.Priority);
             check_items = source.CheckItems.Select(e => new CheckItemDTO(e));
+            if (fileToUrl != null)
+                media = source.Media.Select(e => new MediaDTO(e, fileToUrl));
             created_at = source.CreatedAt;
             modified_at = source.UpdatedAt;
         }

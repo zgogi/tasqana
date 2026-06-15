@@ -45,6 +45,8 @@ namespace Tasqana.Models.http
             public string? caption { get; set; }
             public User? from { get; set; }
 
+            public List<PhotoSize>? photo { get; set; }
+
             public Models.TelegramMessage ToMessage(long userId)
             {
                 var result = new Models.TelegramMessage();
@@ -115,6 +117,30 @@ namespace Tasqana.Models.http
         {
             public string url { get; set; } = null!;
             public LoginUrl(string url) { this.url = url; }
+        }
+
+        public class PhotoSize
+        {
+            public string file_id { get; set; } = null!;
+            public string file_unique_id { get; set; } = null!;
+            public int width { get; set; }
+            public int height { get; set; }
+            public long? size { get; set; }
+        }
+
+        public class File
+        {
+            public string file_id { get; set; } = null!;
+            public string file_unique_id { get; set; } = null!;
+            public long? file_size { get; set; }
+            public string? file_path { get; set; }
+        }
+
+        public class FileResponse
+        {
+            public bool ok { get; set; }
+            public File result { get; set; } = null!;
+            public string? description { get; set; }
         }
     }
 

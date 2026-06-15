@@ -11,14 +11,6 @@ using Tasqana.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    // Очищаем списки известных сетей, так как в Docker IP-адреса контейнеров динамические
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
-});*/
-
 // Add services to the container.
 builder.Services.AddDbContext<TaskanaDb>();
 builder.Services.AddSingleton<IAmazonS3>(sp => S3Client.Create(builder));
@@ -31,6 +23,7 @@ builder.Services.AddScoped<CategoriesRepository>();
 builder.Services.AddScoped<TodosRepository>();
 builder.Services.AddScoped<TelegramRepository>();
 builder.Services.AddScoped<CheckItemRepository>();
+builder.Services.AddScoped<TodoMediaRepository>();
 
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<SessionsService>();
@@ -39,6 +32,7 @@ builder.Services.AddScoped<TodosService>();
 builder.Services.AddScoped<TelegramService>();
 builder.Services.AddScoped<CheckItemService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<TodoMediaService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
