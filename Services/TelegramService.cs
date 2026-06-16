@@ -55,7 +55,7 @@ namespace Tasqana.Services
             var result = message.ToMessage(user.Id);
             result = await _telegram.InsertAsync(result);
             result.User = user;
-            if (result.Text == "/start")
+            if (result.Text?.Trim()?.StartsWith("/start") == true)
                 return await ProcessStartMessageAsync(user, http);
             else if (result.Text != null)
                 return await ProcessTodoMessageAsync(user, message);
