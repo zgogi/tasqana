@@ -123,7 +123,9 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._btnCheckListFromText.addEventListener('click', () => {
             const lines = this._description.value.split('\n');
             for (var i = 0; i < lines.length; ++i) {
-                this._table.addRow({title:lines[i].trim()});
+                const text = lines[i].trim();
+                if (text === '') continue;
+                this._table.addRow({title:text});
             }
             this._description.value = '';
         });
