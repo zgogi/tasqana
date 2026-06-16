@@ -82,6 +82,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._btnCreate = this.container.querySelector('.btn-create');
         this._btnSave = this.container.querySelector('.btn-save');
         this._btnStart = this.container.querySelector('.btn-start');
+        this._btnStop = this.container.querySelector('.btn-stop');
         this._btnComplete = this.container.querySelector('.btn-complete');
         this._btnDelete = this.container.querySelector('.btn-delete');
         this._btnCheckListAdd = this.container.querySelector('.btn-checklist-add');
@@ -96,6 +97,13 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._btnStart.addEventListener('click', () => {
             const item = this._getItem();
             item.state = 1;
+            this.store.todos.save(item, true);
+            this.hide();
+        });
+
+        this._btnStop.addEventListener('click', () => {
+            const item = this._getItem();
+            item.state = 0;
             this.store.todos.save(item, true);
             this.hide();
         });
@@ -173,6 +181,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
         html.setVisible(this._btnCreate, this._id == null);
         html.setVisible(this._btnSave, this._id != null);
         html.setVisible(this._btnStart, this._id != null && todo.state < 1);
+        html.setVisible(this._btnStop, this._id != null && todo.state > 0);
         html.setVisible(this._btnComplete, this._id != null && todo.state < 2);
         html.setVisible(this._btnDelete, this._id != null);
 

@@ -91,6 +91,17 @@ class CategoriesStore {
 		this.items.forEach(todo => this._renderItem(todo));
 	}
 
+	getBreadCrumbs(category, items = null) {
+		const litems = items ?? this.items;
+		for (var i = 0; i < litems.length; ++i) {
+			const item = litems[i];
+			if (item.id === category.id) return [item];
+			const lower = this.getBreadCrumbs(category, item.sub_categories);
+			if (lower != null) return [item].concat(lower);
+		}
+		return null;
+	}
+
 	_renderItem(item, container=null) {
 		if (container === null) 
 			container = document.getElementById('categories-list');
@@ -117,7 +128,6 @@ class CategoriesStore {
                     </div>
 				</div>
 				<div class="category-subnodes w3-margin-left"></div>
-				
 			`;
 
 			var subs = node.querySelector('.category-subnodes');

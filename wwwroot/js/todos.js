@@ -14,9 +14,9 @@ class TodoFilter {
         return result.join('&');
     }
 
-    getTitle() {
+    getTitle(categories) {
         if (this.category != null)
-            return this.category.title;
+            return categories.getBreadCrumbs(this.category).map(this._getTitle).join(' > ');
         else if (this.priority != null)
             return "By priority";
         else if (this.state === 1) 
@@ -26,7 +26,10 @@ class TodoFilter {
         else
             return "Uncategorized";
     }
+
+    _getTitle(category) { return category.title; }
 }
+
 
 
 class TodosStore {
@@ -149,7 +152,7 @@ class TodosStore {
 
     _renderItem(item) {
         const container = document.getElementById('todos-list');
-        document.getElementById('title-todos').innerText = this.filter.getTitle();
+        document.getElementById('title-todos').innerText = this.filter.getTitle(this.parent.categories);
         var node = container.querySelector(`.todo-node[data-id="${item.id}"]`);
         const isNew = !node;
 
@@ -217,12 +220,20 @@ class TodosStore {
         if (this.filter.category == null) {
             const cat = this.parent.categories.get(item.category_id);
             if (cat == null) return '';
-            return `<div class="todo-category">${cat.title}</div>`;
+            return this.parent.categories
+                .getBreadCrumbs(cat)
+                .map(this._getCategoryLink)
+                .join(' > ');
         } else {
             return '';
         }
     }
 
+    _getCategoryLink(category) {
+        return `<div class="category-node z-clickable" data-id="${category.id}">
+                <div class="category-click">${category.title}</div>
+            </div>`;
+    }
 }
 
 
