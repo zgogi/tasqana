@@ -101,7 +101,7 @@ namespace Tasqana.Services
         {
             var item = await _checkitems.GetByIdAsync(user, id, false);
             if (item == null) throw new NotFoundException();
-            await _checkitems.DeleteByIdAsync(id);
+            await _checkitems.RemoveAsync(item);
         }
 
         public async Task<TodoDTO> MoveAsync(Models.User user, Models.http.ReorderDTO form)

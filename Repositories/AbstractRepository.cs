@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Tasqana.Extensions;
 using Tasqana.Models;
 
 namespace Tasqana.Repositories
@@ -48,13 +49,22 @@ namespace Tasqana.Repositories
         }
         public async Task DeleteByIdAsync(long id)
         {
-            await QueryById(id, false)
-                .ExecuteDeleteAsync();
+            var item = await Entities.FindAsync(id);
+            if (item == null) throw new NotFoundException();
+            Entities.Remove(item);
+            await SaveChangesAsync(); // Do not use ExecuteDeleteAsync() or file auto delete will not work
+        }
+
+        public async Task RemoveAsync(T item)
+        {
+            Entities.Remove(item);
+            await SaveChangesAsync(); // Do not use ExecuteDeleteAsync() or file auto delete will not work
         }
 
         public async Task SaveChangesAsync() { await Context.SaveChangesAsync(); }
         
     }
+
 
 
 

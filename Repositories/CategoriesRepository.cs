@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Tasqana.Extensions;
 using Tasqana.Models;
 
 namespace Tasqana.Repositories
@@ -35,9 +36,9 @@ namespace Tasqana.Repositories
 
         public async Task DeleteAsync(User user, long id)
         {
-            await QueryById(id, false)
-                .Where(c => c.UserId == user.Id)
-                .ExecuteDeleteAsync();
+            var item = await GetByIdAsync(user, id, false);
+            if (item == null) throw new NotFoundException();
+            await RemoveAsync(item);
 
         }
 

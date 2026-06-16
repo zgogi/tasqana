@@ -19,13 +19,16 @@ namespace Tasqana.Repositories
 
         private readonly IConfiguration _configuration;
         private readonly ILogger<TaskanaDb> _logger;
+        private readonly DeleteFileS3Interceptor _fileInterceptor;
 
         public TaskanaDb(
             IConfiguration configuration,
-            ILogger<TaskanaDb> logger
+            ILogger<TaskanaDb> logger,
+            DeleteFileS3Interceptor fileInterceptor
             ) { 
             _configuration = configuration;
             _logger = logger;
+            _fileInterceptor = fileInterceptor;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -73,12 +76,12 @@ namespace Tasqana.Repositories
                 entity.HasOne(c => c.User)
                     .WithMany(p => p.Todos)
                     .HasForeignKey(c => c.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.ClientCascade);
 
                 entity.HasOne(c => c.Category)
                     .WithMany(p => p.Todos)
                     .HasForeignKey(c => c.CategoryId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.ClientCascade);
             });
 
             builder.Entity<TelegramMessage>(entity =>
@@ -113,7 +116,7 @@ namespace Tasqana.Repositories
                 entity.HasOne(c => c.Todo)
                     .WithMany(c => c.Media)
                     .HasForeignKey(c => c.TodoId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.ClientCascade);
 
             });
         }
@@ -152,6 +155,7 @@ namespace Tasqana.Repositories
             var connectionString = BuildConnectionString();
 
             optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.AddInterceptors(_fileInterceptor);
         }
 
         private string BuildConnectionString()

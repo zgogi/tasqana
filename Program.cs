@@ -12,7 +12,7 @@ using Tasqana.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<TaskanaDb>();
+
 builder.Services.AddSingleton<IAmazonS3>(sp => S3Client.Create(builder));
 
 builder.Services.AddScoped<TelegramClient>();
@@ -24,6 +24,7 @@ builder.Services.AddScoped<TodosRepository>();
 builder.Services.AddScoped<TelegramRepository>();
 builder.Services.AddScoped<CheckItemRepository>();
 builder.Services.AddScoped<TodoMediaRepository>();
+builder.Services.AddScoped<DeleteFileS3Interceptor>();
 
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<SessionsService>();
@@ -37,6 +38,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<TaskanaDb>();
 
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -54,8 +57,8 @@ app.UseStaticFiles();
 if (app.Environment.IsDevelopment())
 {
     //app.UseForwardedHeaders();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  //  app.UseSwagger();
+//    app.UseSwaggerUI();
     app.UseHttpsRedirection();
 }
 
