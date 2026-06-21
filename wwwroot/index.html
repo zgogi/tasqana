@@ -14,6 +14,7 @@
 	<script src="/js/todos.js"></script>
 	<script src="/js/appstore.js"></script>
 	<script src="/js/dragndrop.js"></script>
+	<script src="/js/files.js"></script>
 	<script src="/js/modal.js"></script>
 </head>
 <body class="w3-theme-d5">
@@ -113,7 +114,7 @@
                     <div class="btn-checklist-add w3-btn"><i class="fa fa-plus-circle"></i> Add</div>
 					<div class="btn-checklist-fromtext w3-btn"><i class="fa fa-list-ol"></i> From text</div>
 				</div>
-				
+				<div id="todo-files" class="tiles-grid" style="flex-wrap: wrap"></div>
 				<div class="w3-flex w3-margin">
 					<button class="btn-create w3-btn w3-blue">Create</button>
 					<button class="btn-save w3-btn w3-blue">Save</button>
@@ -128,13 +129,11 @@
 	</div>
 	<div id="form-image" class="w3-modal">
 		<div class="w3-modal-content w3-animate-zoom w3-round-xlarge w3-theme-d4">
-			<div class="w3-conta5iner">
-				<img src="" class="content w3-image w3-round-xlarge" />
-				<div class="w3-display-topright btn-cancel w3-btn w3-theme-d4 w3-padding w3-round-xlarge fa fa-close"></div>
-			</div>
+			<img src="" class="content w3-image w3-round-xlarge" />
+			<div class="w3-display-topright btn-cancel w3-btn w3-theme-d4 w3-padding w3-round-xlarge fa fa-close"></div>
 		</div>
 	</div>
-
+	<input id="input-file" type="file" multiple accept="imape/*" style="display:none;"/>
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
 			const api = new Api();

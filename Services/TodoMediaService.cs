@@ -14,7 +14,7 @@ namespace Tasqana.Services
             _files = files;
         }
 
-        public async Task<Models.TodoMedia> InsertAsync(Models.Todo todo, string fileName, Stream content, Stream? preview=null, string? title=null)
+        public async Task<Models.TodoFile> InsertAsync(Models.Todo todo, string fileName, Stream content, Stream? preview=null, string? title=null)
         {
             content.Position = 0;
            
@@ -26,18 +26,25 @@ namespace Tasqana.Services
             var contentType = _files.GetContentType(fileName);
             var loadedLile = await _files.UploadFileAsync(fileName, content, contentType);
             string? loadedPreview = null;
+            string? previewContentType = null;
             if (preview != null)
+            {
                 loadedPreview = await _files.UploadFileAsync("preview_"+fileName, preview, contentType);
+                previewContentType = contentType;
+            }
+                
             
-            var item = new Models.TodoMedia
+            var item = new Models.TodoFile
             {
                 TodoId = todo.Id,
                 FileName = loadedLile,
                 FileSize = contentLength,
+                ContentType = contentType,
                 PreviewFileName = loadedPreview,
                 PreviewFileSize = previewLength,
+                PreviewContentType = previewContentType,
                 Title = title,
-                MimeType = contentType
+                
             };
               
             return await _repository.InsertAsync(item);

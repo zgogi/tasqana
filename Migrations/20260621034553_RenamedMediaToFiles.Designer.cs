@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Tasqana.Repositories;
@@ -11,9 +12,11 @@ using Tasqana.Repositories;
 namespace Tasqana.Migrations
 {
     [DbContext(typeof(TaskanaDb))]
-    partial class TaskanaDbModelSnapshot : ModelSnapshot
+    [Migration("20260621034553_RenamedMediaToFiles")]
+    partial class RenamedMediaToFiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

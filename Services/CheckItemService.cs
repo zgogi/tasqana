@@ -20,7 +20,7 @@ namespace Tasqana.Services
             _checkitems = checkitems;
         }
 
-        public async Task<Models.http.TodoDTO> CreateAsync(Models.User user, Models.http.CheckItemCreateDTO form)
+       /* public async Task<Models.http.TodoDTO> CreateAsync(Models.User user, Models.http.CheckItemCreateDTO form)
         {
             var item = await _todos.GetByIdAsync(user, form.todo_id, false);
             if (item == null) throw new NotFoundException();
@@ -28,7 +28,7 @@ namespace Tasqana.Services
             item.CheckItems.UpdateOrder();
             await _todos.SaveChangesAsync();
             return new Models.http.TodoDTO(item);
-        }
+        }*/
 
         public async Task<Models.http.CheckItemDTO> UpdateAsync(Models.User user, Models.http.CheckItemDTO form)
         {
@@ -104,7 +104,7 @@ namespace Tasqana.Services
             await _checkitems.RemoveAsync(item);
         }
 
-        public async Task<TodoDTO> MoveAsync(Models.User user, Models.http.ReorderDTO form)
+        public async Task<Todo> MoveAsync(Models.User user, Models.http.ReorderDTO form)
         {
             var item = await _checkitems.GetByIdAsync(user, form.id, true);
             if (item == null) throw new NotFoundException();
@@ -115,7 +115,7 @@ namespace Tasqana.Services
             todo.CheckItems.MoveBefore(form.id, form.before_id);
 
             await _todos.SaveChangesAsync();
-            return new TodoDTO(todo);
+            return todo;
         }
     }
 }

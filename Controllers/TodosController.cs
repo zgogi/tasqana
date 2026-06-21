@@ -25,8 +25,8 @@ namespace Tasqana.Controllers
             _files = files;
         }
 
-        [HttpPost, Route("create")]
-        public async Task<ActionResult> Create(Models.http.TodoDTO form)
+        [HttpPost, Route("create/form")]
+        public async Task<ActionResult> Create([FromForm] Models.http.TodoDTO form)
         {
             return await WithAuthenticationAsync(async user =>
             {
@@ -35,8 +35,18 @@ namespace Tasqana.Controllers
             });
         }
 
-        [HttpPost, Route("update")]
+      /*  [HttpPost, Route("update")]
         public async Task<ActionResult> Update(Models.http.TodoDTO form)
+        {
+            return await WithAuthenticationAsync(async user =>
+            {
+                var todo = await _todos.UpdateAsync(user, form);
+                return Ok(new Models.http.TodoDTO(todo, e => _files.GetUrl(e)));
+            });
+        }*/
+
+        [HttpPost, Route("update/form")]
+        public async Task<ActionResult> UpdateForm([FromForm] Models.http.TodoDTO form)
         {
             return await WithAuthenticationAsync(async user =>
             {
@@ -46,7 +56,7 @@ namespace Tasqana.Controllers
         }
 
         [HttpPost, Route("delete")]
-        public async Task<ActionResult> Delete(Models.http.TodoDeleteDTO form)
+        public async Task<ActionResult> Delete(Models.http.DeleteDTO form)
         {
             return await WithAuthenticationAsync(async user =>
             {

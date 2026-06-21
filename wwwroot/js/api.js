@@ -7,8 +7,10 @@ class Api {
     async _request(path, options = {}) {
         const url = this.host + path;
 
-        const headers = {
-            'Content-Type': 'application/json',
+        const headers = (options.contentType != undefined) ? {
+            'Content-Type': options.contentType,
+            ...options.headers
+        } : {
             ...options.headers
         };
 
@@ -48,21 +50,43 @@ class Api {
     async post(path, body) {
         return await this._request(path, {
             method: 'POST',
+            contentType: 'application/json',
             body: JSON.stringify(body) 
+        });
+    }
+
+    async postForm(path, form) {
+        return await this._request(path, {
+            method: 'POST',
+            body: form
         });
     }
 }
 
-//const api = new Api();
 
-/*
-api.get('/path')
-	.then(data => {
-		console.log(data);
-	})
-	.catch(error => {
-		console.log("Error:", error);
-	});
-*/
+function objectToFormData(obj, formData = new FormData(), parentKey = '') {
+
+    if (obj === null || obj === undefined) {
+        return formData;
+    }
+
+    if (obj instanceof File || obj instanceof Blob) {
+        formData.append(parentKey, obj);
+    } else if (Array.isArray(obj)) {
+        obj.forEach((element, index) => {
+            objectToFormData(element, formData, `${parentKey}[${index}]`);
+        });
+    } else if (typeof obj === 'object' && !(obj instanceof Date)) {
+        Object.keys(obj).forEach(key => {
+            const fullKey = parentKey ? `${parentKey}.${key}` : key;
+            objectToFormData(obj[key], formData, fullKey);
+        });
+    } else {
+        formData.append(parentKey, obj);
+    }
+
+    return formData;
+}
+
 
 

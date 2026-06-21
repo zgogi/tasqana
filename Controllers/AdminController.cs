@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Tasqana.Models.http;
 using Tasqana.Services;
 
 namespace Tasqana.Controllers
@@ -54,7 +55,7 @@ namespace Tasqana.Controllers
             return await WithAuthenticationAsync(async user => {
                 if (!user.IsAdmin) return Unauthorized();
                 var result = await _todos.GetAllAsync();
-                return Ok(result);
+                return Ok(result.Select(e => new TodoExtDTO(e, f => "")));
             });
         }
 

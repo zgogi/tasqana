@@ -15,7 +15,7 @@ namespace Tasqana.Repositories
         public DbSet<CheckItem> todoListItems => Set<CheckItem>();
         public DbSet<TelegramMessage> TelegamMessages => Set<TelegramMessage>();
 
-        public DbSet<TodoMedia> TodoMedias => Set<TodoMedia>();
+        public DbSet<TodoFile> TodoMedias => Set<TodoFile>();
 
         private readonly IConfiguration _configuration;
         private readonly ILogger<TaskanaDb> _logger;
@@ -107,14 +107,14 @@ namespace Tasqana.Repositories
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            builder.Entity<TodoMedia>(entity =>
+            builder.Entity<TodoFile>(entity =>
             {
-                entity.ToTable("todo_medias");
+                entity.ToTable("todo_files");
                 entity.HasKey(c => c.Id);
                 entity.HasIndex(c => c.TodoId);
 
                 entity.HasOne(c => c.Todo)
-                    .WithMany(c => c.Media)
+                    .WithMany(c => c.Files)
                     .HasForeignKey(c => c.TodoId)
                     .OnDelete(DeleteBehavior.ClientCascade);
 

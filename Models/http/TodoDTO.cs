@@ -1,14 +1,10 @@
-﻿using Tasqana.Extensions;
+﻿using Amazon.S3.Model;
+using Tasqana.Extensions;
 using static Tasqana.Models.http.Telegram;
 
 namespace Tasqana.Models.http
 {
    
-    public class TodoDeleteDTO
-    {
-        public long id { get; set; }
-    }
-
     public class TodoDTO
     {
         public long? id { get; set; }
@@ -20,9 +16,9 @@ namespace Tasqana.Models.http
         public int? state { get; set; }
         public int? priority { get; set; }
         public IEnumerable<CheckItemDTO> check_items { get; set; } = new List<CheckItemDTO>();
-        public IEnumerable<MediaDTO> media { get; set; } = new List<MediaDTO>();
+        public IEnumerable<FileDTO> files { get; set; } = new List<FileDTO>();
         public TodoDTO() { }
-        public TodoDTO(Todo source, Func<string,string>? fileToUrl=null)
+        public TodoDTO(Todo source, Func<string,string> fileToUrl)
         {
             id = source.Id;
             title = source.Title;
@@ -31,8 +27,7 @@ namespace Tasqana.Models.http
             state = ((int)source.State);
             priority = ((int)source.Priority);
             check_items = source.CheckItems.Select(e => new CheckItemDTO(e));
-            if (fileToUrl != null)
-                media = source.Media.Select(e => new MediaDTO(e, fileToUrl));
+            files = source.Files.Select(e => new FileDTO(e, fileToUrl));
             created_at = source.CreatedAt;
             modified_at = source.UpdatedAt;
         }
@@ -72,7 +67,7 @@ namespace Tasqana.Models.http
         public string user_name { get; set; } = null!;
         public string? category { get; set; }
         public int order { get; set; }
-        public TodoExtDTO(Todo source):base(source)
+        public TodoExtDTO(Todo source, Func<string, string> fileToUrl):base(source, fileToUrl)
         {
             user_name = source.User.Name;
             category = source.Category?.Title;

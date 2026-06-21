@@ -74,16 +74,16 @@ class TodosStore {
         return null;
     }
 
-    create(data) {
-        this.api.post(`/todos/create`, data)
+    createForm(data) {
+        this.api.postForm(`/todos/create/form`, data)
             .then(resp => {
                 this.update();
                 this.parent.categories.update();
             });
     }
 
-    save(data, rebuild) {
-        this.api.post(`/todos/update`, data)
+    saveForm(data, rebuild) {
+        this.api.postForm(`/todos/update/form`, data)
             .then(resp => {
                 if (rebuild) {
                     this.update(rebuild);
@@ -91,7 +91,7 @@ class TodosStore {
                 } else {
                     this._setItem(resp);
                 }
-                
+
             });
     }
 
@@ -171,7 +171,7 @@ class TodosStore {
                 </div>
                 <div class="accordion-content w3-bar-item w3-theme-d2 w3-padding w3-hide">
                     <div class="todo-description"></div>
-                    <div class="todo-media"></div>
+                    <div class="todo-files"></div>
                     <div class="todo-checkitems"></div>
                 </div>
                 `;
@@ -183,7 +183,7 @@ class TodosStore {
             <div class="w3-block w3-margin-left">${curr.title}</div>
         </div>`, '');
 
-        const media = item.media.reduce((acc, curr) => acc + `
+        const files = item.files.reduce((acc, curr) => acc + `
         <div>
             <img src="${curr.url}" class="w3-image w3-round-xlarge">
         </div>`, '');
@@ -193,7 +193,7 @@ class TodosStore {
         title.innerText = item.title;
         node.querySelector('.todo-description').innerText = item.description;
         node.querySelector('.todo-checkitems').innerHTML = checkItems;
-        node.querySelector('.todo-media').innerHTML = media;
+        node.querySelector('.todo-files').innerHTML = files;
 
         html.setClass(title, item.priority == 0, 'priority-0');
         html.setClass(title, item.priority == 1, 'priority-1');

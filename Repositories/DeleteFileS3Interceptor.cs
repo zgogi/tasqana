@@ -21,7 +21,7 @@ namespace Tasqana.Repositories
             var context = eventData.Context;
             if (context == null) return base.SavingChangesAsync(eventData, result, cancellationToken);
 
-            var deletedFileEntries = context.ChangeTracker.Entries<Models.TodoMedia>() 
+            var deletedFileEntries = context.ChangeTracker.Entries<Models.TodoFile>() 
                 .Where(e => e.State == EntityState.Deleted)
                 .Select(e => e.Entity)
                 .ToList();

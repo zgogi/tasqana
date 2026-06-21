@@ -79,6 +79,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
 
         this._title = this.container.querySelector('.value-title');
         this._description = this.container.querySelector('.value-description');
+        this._files = new ImageTileManager('#todo-files');
         this._btnCreate = this.container.querySelector('.btn-create');
         this._btnSave = this.container.querySelector('.btn-save');
         this._btnStart = this.container.querySelector('.btn-start');
@@ -89,29 +90,26 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._btnCheckListFromText = this.container.querySelector('.btn-checklist-fromtext');
 
         this._btnCreate.addEventListener('click', () => {
-            const item = this._getItem();
-            this.store.todos.create(item);
+            const item = this._getItemForm();
+            this.store.todos.createForm(item);
             this.hide();
         });
 
         this._btnStart.addEventListener('click', () => {
-            const item = this._getItem();
-            item.state = 1;
-            this.store.todos.save(item, true);
+            const item = this._getItemForm(1);
+            this.store.todos.saveForm(item, true);
             this.hide();
         });
 
         this._btnStop.addEventListener('click', () => {
-            const item = this._getItem();
-            item.state = 0;
-            this.store.todos.save(item, true);
+            const item = this._getItemForm(0);
+            this.store.todos.saveForm(item, true);
             this.hide();
         });
 
         this._btnComplete.addEventListener('click', () => {
-            const item = this._getItem();
-            item.state = 2;
-            this.store.todos.save(item, true);
+            const item = this._getItemForm(2);
+            this.store.todos.saveForm(item, true);
             this.hide();
         });
 
@@ -123,8 +121,8 @@ class TodoEditModalDialog extends AbstractModalDialog {
         });
 
         this._btnSave.addEventListener('click', () => {
-            const data = this._getItem();
-            this.store.todos.save(data, false);
+            const data = this._getItemForm();
+            this.store.todos.saveForm(data, true);
             this.hide();
         });
 
@@ -177,6 +175,7 @@ class TodoEditModalDialog extends AbstractModalDialog {
         this._categoryId = data.categoryid ?? this.store.todos.filter?.category?.id ?? null;
         this._title.value = todo?.title ?? '';
         this._description.value = todo?.description ?? '';
+        this._files.setFiles(todo?.files ?? []);
         this._updatePriority(todo?.priority ?? 0);
         html.setVisible(this._btnCreate, this._id == null);
         html.setVisible(this._btnSave, this._id != null);
@@ -199,23 +198,28 @@ class TodoEditModalDialog extends AbstractModalDialog {
         }
     }
 
-    _getItem() {
+    _getItemForm(state = null) {
+        return objectToFormData(this._getItem(state));
+    }
+
+    _getItem(state=null) {
         return {
             id: this._id,
             title: this._title.value,
             description: this._description.value,
             category_id: this._categoryId,
+            state: state,
             priority: this._priority,
-            check_items: this._table.read()
+            check_items: this._table.read(),
+            files: this._files.getFiles(),
         }
     }
-
 }
 
 class ImageModalDialog extends AbstractModalDialog {
     constructor(store, formId) {
         super(store, formId);
-        this._image = this.container.querySelector(".content")
+        this._image = this.container.querySelector('.content');
     }
 
     onShow(data) {
