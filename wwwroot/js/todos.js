@@ -104,7 +104,9 @@ class TodosStore {
     }
 
     moveToCategory(itemId, categoryId) {
-        this.save({ id: itemId, category_id: categoryId }, true);
+        const data = { id: itemId, category_id: categoryId };
+        const form = objectToFormData(data);
+        this.saveForm(form, true);
         //this.parent.categories.select(categoryId);
     }
 
