@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using System.ComponentModel.DataAnnotations;
 using Tasqana.Extensions;
 using static Tasqana.Models.http.Telegram;
 
@@ -9,6 +10,7 @@ namespace Tasqana.Models.http
     {
         public long? id { get; set; }
         public string? title { get; set; } = null;
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string? description { get; set; } = null;
         public long? category_id { get; set; } = null;
         public DateTime? created_at { get; set; }
