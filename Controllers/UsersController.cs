@@ -26,7 +26,7 @@ namespace Tasqana.Controllers
         {
             var user = await AuthenticateAsync();
             if (user == null) { return Unauthorized(); }
-            var result = await _sessions.CreateSessionAsync(user, HttpContext, 60*24*7);
+            var result = await _sessions.CreateSessionAsync(user, HttpContext, 60*24*60); // 60 days
             return Ok(result);
         }
 

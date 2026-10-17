@@ -65,7 +65,7 @@
         for (var i = 0; i < this._columns.length; ++i) {
             const item = this._columns[i];
             const type = item.type ?? null;
-            const value = (row != null) ? row[item.id] : "";
+            const value = row?.[item.id] ?? "";
             if (type == "hidden") {
                 tr.dataset[item.id] = value;
                 continue;
@@ -101,7 +101,8 @@
 
             if (type == "hidden") {
                 const value = row.dataset[item.id];
-                ret[item.id] = (value === '') ? null : parseInt(value, 10);
+                const id = Number(value);
+                ret[item.id] = value?.trim() && Number.isSafeInteger(id) && id > 0 ? id : null;
             } else if (type == "input-checkbox") {
                 const cell = row.querySelector(`td[data-id="${item.id}"] input`);
                 ret[item.id] = cell?.checked;
