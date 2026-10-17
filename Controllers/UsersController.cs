@@ -30,6 +30,17 @@ namespace Tasqana.Controllers
             return Ok(result);
         }
 
+        [HttpPost, Route("token/app")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<ActionResult> AppToken()
+        {
+            var user = await AuthenticateAsync();
+            if (user == null) return Unauthorized();
+
+            var result = await _sessions.CreateSessionAsync(user, HttpContext, 1);
+            return Ok(new { result.token, result.expired_at, expires_in = 60 });
+        }
+
         [HttpGet, Route("list")]
         public async Task<ActionResult> Get()
         {

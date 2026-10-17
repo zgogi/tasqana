@@ -16,6 +16,8 @@
 	<script src="/js/dragndrop.js"></script>
 	<script src="/js/files.js"></script>
 	<script src="/js/modal.js"></script>
+	<script src="/js/vendor/qrcode.min.js"></script>
+	<script src="/js/app-login.js"></script>
 </head>
 <body class="w3-theme-d5">
 	<div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
@@ -25,7 +27,9 @@
 	<div class="w3-flex" style="width:100%;">
 		<div style="flex-grow:1;"><h3 class="w3-margin-left">Tas<span style="color:yellow;">Q</span>ana</h3></div>
 		<div id="btn-admin" class="w3-hide w3-padding"><a href="/admin">Admin</a></div>
-		<div class="w3-padding">Hi, <span id="user-name"></span></div>
+		<div class="w3-padding">Hi, <span id="user-name"></span>
+			<button id="btn-app-login" type="button" class="w3-button w3-round" title="Authorize Android app"><i class="fa fa-qrcode" aria-hidden="true"></i> App login</button>
+		</div>
 	</div>
 	<div class="w3-row w3-margin" style="gap: 16px; grid-template-columns: repeat(4, 1fr); ">
 		<div id="categories-block" class="w3-third w3-card-4 w3-padding w3-round-xlarge">
@@ -59,6 +63,15 @@
 			</h3>
 			<div id="todos-list"></div>
 
+		</div>
+	</div>
+	<div id="form-app-login" class="w3-modal" role="dialog" aria-modal="true" aria-labelledby="app-login-title" aria-hidden="true">
+		<div class="w3-modal-content w3-card-4 w3-theme-d4 w3-round-xlarge w3-padding w3-center" style="max-width:400px;">
+			<button type="button" class="btn-cancel w3-button w3-right" aria-label="Close">&times;</button>
+			<h2 id="app-login-title">App login</h2>
+			<p>Scan this QR code in the Android app to sign in.</p>
+			<div class="app-login-qr" style="background:white;padding:24px;width:288px;max-width:100%;margin:auto;" hidden></div>
+			<p class="app-login-status" role="status"></p>
 		</div>
 	</div>
 	<div id="form-cat-edit" class="w3-modal">
@@ -139,6 +152,7 @@
 			const api = new Api();
 			const store = new AppStore(api);
 			const modal = new Modal(store);
+			new AppLoginDialog(api, document.getElementById('form-app-login'), document.getElementById('btn-app-login'));
 			const dragndrop = new DragNDrop(store);
 			store.update();
 			store.user.autoUpdate();

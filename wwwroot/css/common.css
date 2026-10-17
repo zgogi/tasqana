@@ -1,4 +1,4 @@
-﻿* {
+* {
     margin: 0px;
     padding: 0px;
 }
@@ -121,3 +121,7 @@ td,.todo-item,.category-item {
     .tile-delete-btn:hover {
         background: #ff1a1a;
     }
+.app-login-qr canvas, .app-login-qr img {
+    max-width: 100%;
+    height: auto;
+}
