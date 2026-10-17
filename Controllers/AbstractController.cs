@@ -29,6 +29,10 @@ namespace Tasqana.Controllers
             try
             {
                 return await action.Invoke(user);
+            } catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+                when (ex.InnerException is Npgsql.PostgresException { SqlState: "23505" })
+            {
+                return Conflict("An identifier already exists. Reload the record before retrying.");
             } catch(HttpException ex)
             {
                 return ex.Result;

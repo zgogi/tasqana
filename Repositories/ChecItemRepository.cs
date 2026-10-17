@@ -1,4 +1,5 @@
-﻿//using System.Data.Entity;
+﻿using Tasqana.Extensions;
+//using System.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using Tasqana.Models;
 using Tasqana.Repositories;
@@ -21,6 +22,12 @@ namespace Tasqana.Repositories
             return await Query(asNoTracking)
                 .Where(e => e.TodoId == todo.Id)
                 .ToListAsync();
+        }
+
+        public Task<Models.CheckItem> ResolveAsync(Models.User user, long? id, Guid? syncId, bool asNoTracking = false)
+        {
+            return Query(asNoTracking).Where(c => c.Todo.UserId == user.Id)
+                .RequireIdentityAsync(id, syncId);
         }
 
     }

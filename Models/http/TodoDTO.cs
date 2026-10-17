@@ -9,23 +9,27 @@ namespace Tasqana.Models.http
     public class TodoDTO
     {
         public long? id { get; set; }
+        public Guid? syncId { get; set; }
         public string? title { get; set; } = null;
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string? description { get; set; } = null;
-        public long? category_id { get; set; } = null;
+        public long? category_id { get; set; }
+        public Guid? categorySyncId { get; set; } = null;
         public DateTime? created_at { get; set; }
         public DateTime? modified_at { get; set; }
         public int? state { get; set; }
         public int? priority { get; set; }
-        public IEnumerable<CheckItemDTO> check_items { get; set; } = new List<CheckItemDTO>();
+        public IEnumerable<CheckItemDTO>? check_items { get; set; }
         public IEnumerable<FileDTO> files { get; set; } = new List<FileDTO>();
         public TodoDTO() { }
         public TodoDTO(Todo source, Func<string,string> fileToUrl)
         {
             id = source.Id;
+            syncId = source.SyncId;
             title = source.Title;
             description = source.Description;
             category_id = source.CategoryId;
+            categorySyncId = source.Category?.SyncId;
             state = ((int)source.State);
             priority = ((int)source.Priority);
             check_items = source.CheckItems.Select(e => new CheckItemDTO(e));
@@ -39,6 +43,7 @@ namespace Tasqana.Models.http
             return new Models.Todo
             {
                 UserId = user.Id,
+                SyncId = syncId ?? Guid.NewGuid(),
                 CategoryId = this.category_id,
                 Title = this.title ?? "",
                 Description = this.description?.Trim()?.NullIfEmpty(),

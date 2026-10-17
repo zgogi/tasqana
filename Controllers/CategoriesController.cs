@@ -24,7 +24,7 @@ namespace Tasqana.Controllers
         public async Task<ActionResult> Create(Models.http.CategoryCreateDTO form)
         {
             return await WithAuthenticationAsync(async user => {
-                var result = await _categories.InsertAsync(user, form.title, form.parent_id);
+                var result = await _categories.InsertAsync(user, form.title, form.parent_id, form.syncId, form.parentSyncId);
                 return Ok(result);
             });
             
@@ -53,7 +53,7 @@ namespace Tasqana.Controllers
         public async Task<ActionResult> DeleteAsync(CategoryDeleteDTO form)
         {
             return await WithAuthenticationAsync(async user => { 
-                await _categories.DeleteAsync(user, form.id);
+                await _categories.DeleteAsync(user, form.id, form.syncId);
                 return NoContent();   
             });
         }

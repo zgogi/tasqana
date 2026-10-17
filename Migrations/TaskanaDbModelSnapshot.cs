@@ -49,7 +49,14 @@ namespace Tasqana.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid>("SyncId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SyncId").IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -85,7 +92,14 @@ namespace Tasqana.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("SyncId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SyncId").IsUnique();
 
                     b.HasIndex("TodoId");
 
@@ -202,7 +216,14 @@ namespace Tasqana.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid>("SyncId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SyncId").IsUnique();
 
                     b.HasIndex("CategoryId");
 
@@ -254,7 +275,14 @@ namespace Tasqana.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("SyncId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SyncId").IsUnique();
 
                     b.HasIndex("TodoId");
 

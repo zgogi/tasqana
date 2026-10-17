@@ -42,5 +42,11 @@ namespace Tasqana.Repositories
 
         }
 
+        public Task<Models.Category> ResolveAsync(Models.User user, long? id, Guid? syncId, bool asNoTracking = false)
+        {
+            return Query(asNoTracking).Where(c => c.UserId == user.Id).Include(c => c.Parent)
+                .RequireIdentityAsync(id, syncId);
+        }
+
     }
 }

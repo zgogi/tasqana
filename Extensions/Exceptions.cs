@@ -8,6 +8,11 @@ namespace Tasqana.Extensions
         protected HttpException(ActionResult result) { Result = result; }
     }
 
+    public class InvalidRequestException : HttpException
+    {
+        public InvalidRequestException(string message) : base(new BadRequestObjectResult(message)) { }
+    }
+
     public class NotFoundException : HttpException
     {
         public NotFoundException() : base(new NotFoundObjectResult(null)) { }

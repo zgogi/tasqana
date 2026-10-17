@@ -14,7 +14,7 @@ namespace Tasqana.Services
             _files = files;
         }
 
-        public async Task<Models.TodoFile> InsertAsync(Models.Todo todo, string fileName, Stream content, Stream? preview=null, string? title=null)
+        public async Task<Models.TodoFile> InsertAsync(Models.Todo todo, string fileName, Stream content, Stream? preview=null, string? title=null, Guid? syncId=null)
         {
             content.Position = 0;
            
@@ -37,6 +37,7 @@ namespace Tasqana.Services
             var item = new Models.TodoFile
             {
                 TodoId = todo.Id,
+                SyncId = syncId ?? Guid.NewGuid(),
                 FileName = loadedLile,
                 FileSize = contentLength,
                 ContentType = contentType,

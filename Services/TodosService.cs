@@ -23,6 +23,14 @@ namespace Tasqana.Services
 
         public async Task<Models.Todo> InsertAsync(Models.User user, Models.http.TodoDTO form)
         {
+            SyncIdentity.Validate(form.syncId);
+            if (form.syncId.HasValue)
+            {
+                var existing = await _todos.Query(false).Include(c => c.CheckItems).Include(c => c.Files)
+                    .SingleOrDefaultAsync(c => c.UserId == user.Id && c.SyncId == form.syncId);
+                if (existing != null) return existing;
+            }
+            await ResolveCategoryAsync(user, form);
             var other = await _todos.GetByCategoryAsync(user, form.category_id, true);
             var todo = form.ToTodo(user);
             todo.Order = other.Count;
@@ -37,13 +45,13 @@ namespace Tasqana.Services
                     await _todos.SaveChangesAsync();
                 }
             }
-            return result;
+            return await _todos.ResolveAsync(user, result.Id, null);
         }
 
         public async Task<Models.Todo> UpdateAsync(Models.User user, Models.http.TodoDTO form)
         {
-            if (!form.id.HasValue) throw new NotFoundException();
-            var item = await _todos.GetByIdAsync(user, form.id ?? 0, false);
+            var item = await _todos.ResolveAsync(user, form.id, form.syncId);
+            await ResolveCategoryAsync(user, form);
             if (item == null) { throw new NotFoundException(); }
             UpdateItem(item, form);
             await UpdateItemFilesAsync(item, form);
@@ -57,8 +65,10 @@ namespace Tasqana.Services
             return result;
         }
 
-        public async Task<IEnumerable<Models.Todo>> GetFilteredAsync(Models.User user, long? categoryId, bool priority, Models.TodoState? state)
+        public async Task<IEnumerable<Models.Todo>> GetFilteredAsync(Models.User user, long? categoryId, bool priority, Models.TodoState? state, Guid? categorySyncId = null)
         {
+            if (categorySyncId.HasValue)
+                categoryId = (await _todos.ResolveCategoryAsync(user, categoryId, categorySyncId)).Id;
             var result = new List<Models.Todo>();
             if (priority)
                 result = await _todos.GetByPriorityAsync(user, Models.Priority.Low);
@@ -69,14 +79,22 @@ namespace Tasqana.Services
             return result;
         }
 
-        public async Task DeleteAsync(Models.User user, long id)
+        public async Task DeleteAsync(Models.User user, long id, Guid? syncId = null)
         {
-            await _todos.DeleteAsync(user, id);
+            var item = await _todos.ResolveAsync(user, id, syncId);
+            await _todos.RemoveAsync(item);
         }
 
         public async Task<IEnumerable<Models.Todo>> MoveAsync(Models.User user, Models.http.ReorderDTO form)
         {
-            var item = await _todos.GetByIdAsync(user, form.id, true);
+            var item = await _todos.ResolveAsync(user, form.id, form.syncId, true);
+            form.id = item.Id;
+            if (form.before_id.HasValue || form.beforeSyncId.HasValue)
+            {
+                var before = await _todos.ResolveAsync(user, form.before_id, form.beforeSyncId, true);
+                if (before.CategoryId != item.CategoryId) throw new InvalidRequestException("Tasks must belong to the same category.");
+                form.before_id = before.Id;
+            }
             if (item == null) throw new NotFoundException();
 
             var items = await _todos.GetByCategoryAsync(user, item.CategoryId, false);
@@ -84,6 +102,15 @@ namespace Tasqana.Services
           
             await _todos.SaveChangesAsync();
             return items;
+        }
+
+        private async Task ResolveCategoryAsync(Models.User user, Models.http.TodoDTO form)
+        {
+            if (form.category_id.HasValue || form.categorySyncId.HasValue)
+            {
+                var category = await _todos.ResolveCategoryAsync(user, form.category_id, form.categorySyncId);
+                form.category_id = category.Id;
+            }
         }
 
         private void UpdateItem(Models.Todo todo, Models.http.TodoDTO form)
@@ -102,18 +129,20 @@ namespace Tasqana.Services
 
         private async Task UpdateItemFilesAsync(Models.Todo todo, Models.http.TodoDTO form)
         {
-            foreach (var file in form.files)
+            foreach (var file in form.files ?? [])
             {
+                var existing = todo.Files.FindIdentity(file.id, file.syncId);
+                if (file.id is > 0 && existing == null) throw new NotFoundException();
                 if (file.is_deleted)
                 {
-                    var itemToRemove = todo.Files.SingleOrDefault(e => e.Id == file.id);
+                    var itemToRemove = existing;
                     if (itemToRemove == null) continue;
                     todo.Files.Remove(itemToRemove);
                 }
-                else if (file.content != null)
+                else if (file.content != null && existing == null)
                 {
                     using var content = file.content.OpenReadStream();
-                    var newFile = await _media.InsertAsync(todo, file.content.FileName, content);
+                    var newFile = await _media.InsertAsync(todo, file.content.FileName, content, syncId: file.syncId);
                     todo.Files.Add(newFile);
                 }
             }

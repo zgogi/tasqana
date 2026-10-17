@@ -11,6 +11,12 @@ namespace Tasqana.Repositories
             : base(context) { }
 
 
+        public override IQueryable<Models.Todo> Query(bool asNoTracking)
+            => base.Query(asNoTracking).Include(c => c.Category);
+
+        public Task<Models.Category> ResolveCategoryAsync(Models.User user, long? id, Guid? syncId)
+            => Context.Categories.Where(c => c.UserId == user.Id).RequireIdentityAsync(id, syncId);
+
         public override async Task<List<Models.Todo>> GetAllAsync(bool asNoTracking)
         {
             return await Query(asNoTracking)
@@ -70,6 +76,12 @@ namespace Tasqana.Repositories
             var item = await GetByIdAsync(user, id, false);
             if (item == null) throw new NotFoundException();
             await RemoveAsync(item);
+        }
+
+        public Task<Models.Todo> ResolveAsync(Models.User user, long? id, Guid? syncId, bool asNoTracking = false)
+        {
+            return Query(asNoTracking).Where(c => c.UserId == user.Id).Include(c => c.Category).Include(c => c.CheckItems).Include(c => c.Files)
+                .RequireIdentityAsync(id, syncId);
         }
 
     }

@@ -3,8 +3,10 @@ using Tasqana.Models;
 
 namespace Tasqana.Models
 {
-    public class CheckItem : AbstractModel<CheckItem>, IOrderable
+    public class CheckItem : AbstractModel<CheckItem>, IOrderable, ISyncEntity
     {
+        public Guid SyncId { get; set; } = Guid.NewGuid();
+
         public long TodoId { get; set; }
         public string Title { get; set; } = null!;
         public bool IsCompleted { get; set; }

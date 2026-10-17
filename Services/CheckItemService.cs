@@ -32,7 +32,7 @@ namespace Tasqana.Services
 
         public async Task<Models.http.CheckItemDTO> UpdateAsync(Models.User user, Models.http.CheckItemDTO form)
         {
-            var item = await _checkitems.GetByIdAsync(user, form.id ?? 0, false);
+            var item = await _checkitems.ResolveAsync(user, form.id, form.syncId);
             if (item == null) throw new NotFoundException();
             if (form.title != null) item.Title = form.title;
             if (form.is_completed != null) item.IsCompleted = form.is_completed ?? false;
@@ -42,71 +42,60 @@ namespace Tasqana.Services
 
         public void UpdateList(Models.Todo todo, List<Models.http.CheckItemDTO> items)
         {
-            var incomingIds = items
-                 .Where(x => x.id.HasValue)
-                 .Select(x => x.id!.Value)
-                 .ToList();
-
-            var itemsToRemove = todo.CheckItems
-                .Where(existing => !incomingIds.Contains(existing.Id))
-                .ToList();
-
-            foreach (var item in itemsToRemove)
+            var resolved = new List<(CheckItem Item, CheckItemDTO Input)>();
+            var syncIds = new HashSet<Guid>();
+            foreach (var incoming in items)
             {
-                todo.CheckItems.Remove(item);
+                var existing = todo.CheckItems.FindIdentity(incoming.id, incoming.syncId);
+                if (existing == null && incoming.id is > 0) throw new NotFoundException();
+                var item = existing ?? new CheckItem
+                {
+                    SyncId = incoming.syncId ?? Guid.NewGuid(),
+                    TodoId = todo.Id
+                };
+                if (!syncIds.Add(item.SyncId)) throw new InvalidRequestException("Duplicate checklist item.");
+                resolved.Add((item, incoming));
             }
 
-            for (int i = 0; i < items.Count; i++)
+            var retained = resolved.Select(x => x.Item).ToHashSet();
+            todo.CheckItems.RemoveAll(x => !retained.Contains(x));
+            for (var i = 0; i < resolved.Count; i++)
             {
-                var incomingItem = items[i];
-
-                if (incomingItem.id.HasValue && incomingItem.id.Value > 0)
-                {
-                    var existingItem = todo.CheckItems
-                        .FirstOrDefault(x => x.Id == incomingItem.id.Value);
-
-                    if (existingItem != null)
-                    {
-                        existingItem.Title = incomingItem.title ?? "";
-                        existingItem.IsCompleted = incomingItem.is_completed ?? false;
-                        existingItem.Order = i; 
-                    }
-                }
-                else
-                {
-                    var newItem = new CheckItem
-                    {
-                        Title = incomingItem.title ?? "",
-                        IsCompleted = incomingItem.is_completed ?? false,
-                        TodoId = todo.Id,
-                        Order = i 
-                    };
-
-                    todo.CheckItems.Add(newItem);
-                }
+                var (item, incoming) = resolved[i];
+                item.Title = incoming.title ?? "";
+                item.IsCompleted = incoming.is_completed ?? false;
+                item.Order = i;
+                if (!todo.CheckItems.Contains(item)) todo.CheckItems.Add(item);
             }
-            todo.CheckItems.Sort((a,b) => a.Order.CompareTo(b.Order));
+            todo.CheckItems.Sort((a, b) => a.Order.CompareTo(b.Order));
         }
 
-        public async Task<Models.http.CheckItemDTO> ToggleAsync(Models.User user, long id)
+        public async Task<Models.http.CheckItemDTO> ToggleAsync(Models.User user, long id, Guid? syncId = null)
         {
-            var item = await _checkitems.GetByIdAsync(user, id, false);
+            var item = await _checkitems.ResolveAsync(user, id, syncId);
             if (item == null) throw new NotFoundException();
             item.IsCompleted = !item.IsCompleted;
             await _checkitems.SaveChangesAsync();
             return new Models.http.CheckItemDTO(item);
         }
 
-        public async Task DeleteAsync(Models.User user, long id)
+        public async Task DeleteAsync(Models.User user, long id, Guid? syncId = null)
         {
-            var item = await _checkitems.GetByIdAsync(user, id, false);
+            var item = await _checkitems.ResolveAsync(user, id, syncId);
             if (item == null) throw new NotFoundException();
             await _checkitems.RemoveAsync(item);
         }
 
         public async Task<Todo> MoveAsync(Models.User user, Models.http.ReorderDTO form)
         {
-            var item = await _checkitems.GetByIdAsync(user, form.id, true);
+            var item = await _checkitems.ResolveAsync(user, form.id, form.syncId, true);
+            form.id = item.Id;
+            if (form.before_id.HasValue || form.beforeSyncId.HasValue)
+            {
+                var before = await _checkitems.ResolveAsync(user, form.before_id, form.beforeSyncId, true);
+                if (before.TodoId != item.TodoId) throw new InvalidRequestException("Checklist items must belong to the same task.");
+                form.before_id = before.Id;
+            }
             if (item == null) throw new NotFoundException();
 
             var todo = await _todos.GetByIdAsync(user, item.TodoId, false);

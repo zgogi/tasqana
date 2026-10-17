@@ -63,7 +63,7 @@ namespace Tasqana.Controllers
         public async Task<ActionResult> ChecklistItemToggle(Models.http.DeleteDTO form)
         {
             return await WithAuthenticationAsync(async user => {
-                var result = await _checkItems.ToggleAsync(user, form.id);
+                var result = await _checkItems.ToggleAsync(user, form.id, form.syncId);
                 return Ok(result);
             });
         }

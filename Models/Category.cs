@@ -2,8 +2,10 @@
 
 namespace Tasqana.Models
 {
-    public class Category : AbstractModel<Category>, IOrderable
+    public class Category : AbstractModel<Category>, IOrderable, ISyncEntity
     {
+        public Guid SyncId { get; set; } = Guid.NewGuid();
+
         public long? ParentId { get; set; }
         public long UserId { get; set; }
         public string Title { get; set; } = null!;

@@ -20,6 +20,7 @@ namespace Tasqana.Models.http
     public class CheckItemDTO
     {
         public long? id { get; set; }
+        public Guid? syncId { get; set; }
         public string? title { get; set; }
         public bool? is_completed { get; set; }
 
@@ -28,6 +29,7 @@ namespace Tasqana.Models.http
         public CheckItemDTO(Models.CheckItem source)
         {
             id = source.Id;
+            syncId = source.SyncId;
             title = source.Title;
             is_completed = source.IsCompleted;
         }
@@ -37,6 +39,7 @@ namespace Tasqana.Models.http
             return new CheckItem
             {
                 Title = this.title ?? "",
+                SyncId = syncId ?? Guid.NewGuid(),
                 IsCompleted = this.is_completed ?? false,
             };
         }

@@ -34,6 +34,10 @@ namespace Tasqana.Repositories
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            ConfigureSyncId<Todo>(builder);
+            ConfigureSyncId<Category>(builder);
+            ConfigureSyncId<CheckItem>(builder);
+            ConfigureSyncId<TodoFile>(builder);
 
             builder.Entity<User>(entity =>
             {
@@ -119,6 +123,12 @@ namespace Tasqana.Repositories
                     .OnDelete(DeleteBehavior.ClientCascade);
 
             });
+        }
+
+        private static void ConfigureSyncId<T>(ModelBuilder builder) where T : class, ISyncEntity
+        {
+            builder.Entity<T>().Property(x => x.SyncId).HasDefaultValueSql("gen_random_uuid()");
+            builder.Entity<T>().HasIndex(x => x.SyncId).IsUnique();
         }
 
         public override int SaveChanges()

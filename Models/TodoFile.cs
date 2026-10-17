@@ -1,7 +1,9 @@
 ﻿namespace Tasqana.Models
 {
-    public class TodoFile : AbstractModel<TodoFile>, IOrderable
+    public class TodoFile : AbstractModel<TodoFile>, IOrderable, ISyncEntity
     {
+        public Guid SyncId { get; set; } = Guid.NewGuid();
+
         public long TodoId { get; set; }
         public int Order { get; set; }
         public string? Title { get; set; }

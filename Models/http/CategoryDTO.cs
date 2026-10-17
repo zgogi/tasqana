@@ -4,25 +4,31 @@ namespace Tasqana.Models.http
 {
     public class CategoryCreateDTO
     {
+        public Guid? syncId { get; set; }
         public string title { get; set; } = null!;
         public long? parent_id { get; set; }
+        public Guid? parentSyncId { get; set; }
     }
 
     public class CategoryUpdateDTO
     {
         public long id { get; set; }
+        public Guid? syncId { get; set; }
         public string? title { get; set; } = null!;
     }
 
     public class  CategoryDeleteDTO
     {
         public long id { get; set; }
+        public Guid? syncId { get; set; }
     }
 
     public class  CategoryDTO 
     {
         public long id { get; set; }
-        public long? parent_id;
+        public Guid? syncId { get; set; }
+        public long? parent_id { get; set; }
+        public Guid? parentSyncId { get; set; }
         public string title { get; set; } = null!;
         public int todo_count { get; set; } = 0;
         public IEnumerable<CategoryDTO> sub_categories { get; set; } = Enumerable.Empty<CategoryDTO>();
@@ -32,6 +38,9 @@ namespace Tasqana.Models.http
         public CategoryDTO(Category source, IEnumerable<CategoryDTO>? items=null)
         {
             id = source.Id;
+            syncId = source.SyncId;
+            parent_id = source.ParentId;
+            parentSyncId = source.Parent?.SyncId;
             title = source.Title;
             sub_categories = items ?? Enumerable.Empty<CategoryDTO>();
             todo_count = source.Todos.Count;
@@ -40,6 +49,8 @@ namespace Tasqana.Models.http
         public CategoryDTO(CategoryDTO source, IEnumerable<CategoryDTO>? items = null)
         {
             id = source.id;
+            syncId = source.syncId;
+            parentSyncId = source.parentSyncId;
             parent_id = source.parent_id;
             title = source.title;
             sub_categories = items ?? Enumerable.Empty<CategoryDTO>();
