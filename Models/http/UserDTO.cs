@@ -4,6 +4,7 @@ namespace Tasqana.Models.http
 {
     public class AuthResponseDTO
     {
+        public long user_id { get; set; }
         public string name { get; set; } = null!;
         public string token { get; set; } = null!;
         public bool is_admin { get; set; }
@@ -11,6 +12,7 @@ namespace Tasqana.Models.http
 
         public AuthResponseDTO(Models.User user, string token, DateTime expiredAt)
         {
+            user_id = user.Id;
             this.name = user.Name;
             this.token = token;
             this.is_admin = user.IsAdmin;
