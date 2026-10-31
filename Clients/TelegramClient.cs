@@ -10,9 +10,11 @@ namespace Tasqana.Clients
 
         public TelegramClient(
             IConfiguration configuration
-            )
+            ) : this(configuration, new HttpClient()) { }
+
+        public TelegramClient(IConfiguration configuration, HttpClient httpClient)
         {
-            _httpClient = new HttpClient(); 
+            _httpClient = httpClient;
 
             var config = configuration.GetSection("Telegram").GetChildren();
             _botToken = config.SingleOrDefault(e => e.Key == "BotToken")?.Value;
@@ -49,6 +51,19 @@ namespace Tasqana.Clients
             var filePath = await GetFileAsync(fileId);
             var content = await GetFileContentAsync(filePath);
             return content;
+        }
+
+        public Task<bool> EditMessageAsync(Models.http.Telegram.EditMessageRequest payload)
+            => PostActionAsync("editMessageText", payload);
+
+        public Task<bool> AnswerCallbackAsync(string callbackId, string? text = null)
+            => PostActionAsync("answerCallbackQuery", new { callback_query_id = callbackId, text });
+
+        private async Task<bool> PostActionAsync<T>(string method, T payload)
+        {
+            using var response = await _httpClient.PostAsJsonAsync($"{_host}/{method}", payload);
+            using var body = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            return response.IsSuccessStatusCode && body.RootElement.TryGetProperty("ok", out var ok) && ok.GetBoolean();
         }
 
         public async Task<string> GetFileAsync(string fileId)

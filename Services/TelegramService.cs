@@ -1,4 +1,4 @@
-﻿using Tasqana.Clients;
+using Tasqana.Clients;
 using Tasqana.Models;
 using Tasqana.Models.http;
 using Tasqana.Repositories;
@@ -14,6 +14,9 @@ namespace Tasqana.Services
         private readonly TodosService _todos;
         private readonly TodoMediaService _todoMedia;
         private readonly string _dns;
+        private readonly CategoriesRepository _categories;
+        private readonly TodosRepository _todoRepository;
+        private readonly TelegramCategoryMenu _categoryMenu;
 
         public TelegramService(
             SessionsService sessions,
@@ -22,7 +25,10 @@ namespace Tasqana.Services
             TelegramClient client,
             TodosService todos,
             TodoMediaService todoMedia,
-            IConfiguration configuration
+            IConfiguration configuration,
+            CategoriesRepository categories,
+            TodosRepository todoRepository,
+            TelegramCategoryMenu categoryMenu
             )
         {
             _sessions = sessions;
@@ -31,6 +37,9 @@ namespace Tasqana.Services
             _client = client;
             _todos = todos;
             _todoMedia = todoMedia;
+            _categories = categories;
+            _todoRepository = todoRepository;
+            _categoryMenu = categoryMenu;
             var config = configuration.GetSection("Host").GetChildren();
             _dns = config.SingleOrDefault(e => e.Key == "Dns")?.Value ?? "";
         }
@@ -55,8 +64,12 @@ namespace Tasqana.Services
             var result = message.ToMessage(user.Id);
             result = await _telegram.InsertAsync(result);
             result.User = user;
-            if (result.Text?.Trim()?.StartsWith("/start") == true)
-                return await ProcessStartMessageAsync(user, http);
+            var text = result.Text?.TrimStart() ?? "";
+            if (text.StartsWith('/'))
+            {
+                var command = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)[0].Split('@')[0];
+                return command == "/start" && await ProcessStartMessageAsync(user, http);
+            }
             else if (result.Text != null)
                 return await ProcessTodoMessageAsync(user, message);
             else
@@ -71,6 +84,57 @@ namespace Tasqana.Services
             await _telegram.InsertAsync(result);
             return true;
         }
+
+        public async Task ProcessCallbackAsync(CallbackQuery callback)
+        {
+            string? answer = null;
+            try
+            {
+                if (callback.from == null || callback.message?.chat == null ||
+                    !_categoryMenu.TryParse(callback.data, out var action) || action!.Command != "move" ||
+                    !long.TryParse(action.Context, out var todoId) || todoId <= 0)
+                {
+                    answer = "Эта кнопка больше недоступна.";
+                    return;
+                }
+                var user = await _users.GetByTelegramIdAsync(callback.from.id);
+                if (user == null) { answer = "Сначала отправьте /start."; return; }
+                var todo = await _todoRepository.GetByIdAsync(user, todoId, true);
+                var categories = await _categories.GetByUser(user);
+                var category = categories.SingleOrDefault(c => c.Id == action.CategoryId);
+                if (todo == null || (action.CategoryId.HasValue && category == null))
+                {
+                    answer = "Задача или категория недоступна.";
+                    return;
+                }
+                var heading = "Выберите категорию для задачи: " + ShortTitle(todo.Title);
+                var parentId = action.CategoryId;
+                if (action.Select)
+                {
+                    await _todos.UpdateAsync(user, new TodoDTO { id = todo.Id, category_id = category!.Id });
+                    answer = "Задача перемещена.";
+                    heading = "Задача «" + ShortTitle(todo.Title) + "» перемещена в «" + ShortTitle(category.Title) + "».";
+                    parentId = category.ParentId;
+                }
+                var page = _categoryMenu.Build(categories, parentId, action.Command, action.Context, heading);
+                var edited = await _client.EditMessageAsync(new EditMessageRequest(callback.message.chat.id,
+                    callback.message.message_id, page.Text, page.Markup));
+                if (!edited) answer = action.Select
+                    ? "Задача перемещена, но меню не обновилось."
+                    : "Не удалось обновить меню. Попробуйте ещё раз.";
+            }
+            catch
+            {
+                answer = "Не удалось выполнить действие. Попробуйте ещё раз.";
+                throw;
+            }
+            finally
+            {
+                await _client.AnswerCallbackAsync(callback.id, answer);
+            }
+        }
+
+        private static string ShortTitle(string title) => title.Length > 200 ? title[..200] + "…" : title;
 
         private async Task<bool> ProcessStartMessageAsync(Models.User user, HttpContext http)
         {
@@ -105,7 +169,11 @@ namespace Tasqana.Services
                 }
             }
 
-            return true;
+            var categories = await _categories.GetByUser(user);
+            var page = _categoryMenu.Build(categories, null, "move",
+                todo.Id.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                "Задача сохранена: " + ShortTitle(todo.Title) + "\nВыберите категорию:");
+            return await SendMessageAsync(user, new SendRequest(message.chat?.id ?? user.TelegramId, page.Text, page.Markup));
         }
 
 

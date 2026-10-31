@@ -34,6 +34,27 @@ namespace Tasqana.Models.http
         {
             public long update_id { get; set; }
             public Message? message { get; set; }
+            public CallbackQuery? callback_query { get; set; }
+        }
+
+        public class CallbackQuery
+        {
+            public string id { get; set; } = "";
+            public User? from { get; set; }
+            public Message? message { get; set; }
+            public string? data { get; set; }
+        }
+
+        public class Chat
+        {
+            public long id { get; set; }
+        }
+
+        public class EditMessageRequest : SendRequest
+        {
+            public long message_id { get; set; }
+            public EditMessageRequest(long chatId, long messageId, string text, ReplyMarkup markup)
+                : base(chatId, text, markup) { message_id = messageId; }
         }
 
 
@@ -44,6 +65,7 @@ namespace Tasqana.Models.http
             public string? text { get; set; }
             public string? caption { get; set; }
             public User? from { get; set; }
+            public Chat? chat { get; set; }
 
             public List<PhotoSize>? photo { get; set; }
 
@@ -104,7 +126,12 @@ namespace Tasqana.Models.http
         public class InlineKeyboardButton
         {
             public string text { get; set; } = null!;
-            public string url { get; set; } = null!;
+            [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+            public string? url { get; set; }
+            [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+            public string? callback_data { get; set; }
+            public static InlineKeyboardButton Callback(string text, string data)
+                => new(text, null!) { callback_data = data };
             public InlineKeyboardButton(string text, string url)
             {
                 this.text = text;

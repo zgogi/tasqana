@@ -33,6 +33,11 @@ namespace Tasqana.Controllers
                                    .FirstOrDefault();
                 if (secret != _secret) return Unauthorized();
 
+                if (update.callback_query != null)
+                {
+                    await _telegram.ProcessCallbackAsync(update.callback_query);
+                    return Ok();
+                }
                 if (update.message == null) return Ok();
                 var user = await _telegram.GetOrCreateUserAsync(update.message);
                 if (user == null) return Ok();

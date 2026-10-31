@@ -31,6 +31,7 @@ builder.Services.AddScoped<SessionsService>();
 builder.Services.AddScoped<CategoriesService>();
 builder.Services.AddScoped<TodosService>();
 builder.Services.AddScoped<TelegramService>();
+builder.Services.AddScoped<TelegramCategoryMenu>();
 builder.Services.AddScoped<CheckItemService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<TodoMediaService>();
