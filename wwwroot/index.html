@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<title>TasQana — Your workspace</title>
+	<meta name="theme-color" content="#101419">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
 	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
@@ -24,19 +26,20 @@
 		<i class="fa fa-close w3-right w3-padding w3-btn" onclick='html.hideError();'></i>
 		<p id="error-content" class="w3-padding"></p>
 	</div>
-	<div class="w3-flex" style="width:100%;">
-		<div style="flex-grow:1;"><h3 class="w3-margin-left">Tas<span style="color:yellow;">Q</span>ana</h3></div>
+	<header class="app-header w3-flex">
+		<a class="brand" href="/" aria-label="TasQana home">Tas<span>Q</span>ana</a>
 		<div id="btn-admin" class="w3-hide w3-padding"><a href="/admin">Admin</a></div>
-		<div class="w3-padding">Hi, <span id="user-name"></span>
+		<div class="account-actions"><span class="user-greeting">Hi, <span id="user-name"></span></span>
 			<button id="btn-app-login" type="button" class="w3-button w3-round" title="Authorize Android app"><i class="fa fa-qrcode" aria-hidden="true"></i> App login</button>
 		</div>
-	</div>
-	<div class="w3-row w3-margin" style="gap: 16px; grid-template-columns: repeat(4, 1fr); ">
+	</header>
+	<div class="workspace-heading"><p class="eyebrow">YOUR WORKSPACE</p><h1>A little clarity. A lot of progress.</h1><p>Keep your tasks in order and focus on what matters.</p></div>
+	<main class="workspace-layout">
 		<div id="categories-block" class="w3-third w3-card-4 w3-padding w3-round-xlarge">
 			<div class="w3-flex">
 				<h3 class="z-flex-grow">
 					Categories
-					<i class="btn-cat-edit fa fa-plus-circle w3-right w3-btn"></i>
+					<button type="button" class="btn-cat-edit fa fa-plus w3-right w3-btn" aria-label="Add category"></button>
 				</h3>
 			</div>
 			<div id="categories-list" class=""></div>
@@ -58,13 +61,13 @@
 		</div>
 		<div id="block-todos" class="w3-twothird w3-card-4 w3-padding w3-round-xlarge">
 			<h3 class="title">
-				<span id="title-todos"></span>
-				<i class="btn-todo-edit fa fa-plus-circle w3-right w3-btn"></i>
+				<span id="title-todos">Uncategorized</span>
+				<button type="button" class="btn-todo-edit w3-right w3-btn primary-action">+ New task</button>
 			</h3>
 			<div id="todos-list"></div>
 
 		</div>
-	</div>
+	</main>
 	<div id="form-app-login" class="w3-modal" role="dialog" aria-modal="true" aria-labelledby="app-login-title" aria-hidden="true">
 		<div class="w3-modal-content w3-card-4 w3-theme-d4 w3-round-xlarge w3-padding w3-center" style="max-width:400px;">
 			<button type="button" class="btn-cancel w3-button w3-right" aria-label="Close">&times;</button>

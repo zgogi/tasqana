@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <title>Admin panel</title>
@@ -7,25 +7,28 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/common.css">
     <script src="/js/api.js"></script>
     <script src="/js/html.js"></script>
     <script src="/js/table.js"></script>
 </head>
-<body class="w3-theme-d5">
+<body class="w3-theme-d5 admin-page">
     <div id="error" class="w3-panel w3-red w3-hide w3-animate-top">
         <i class="fa fa-close w3-right w3-padding w3-btn" onclick='html.hideError();'></i>
         <p id="error-content" class="w3-padding"></p>
     </div>
     <div class="w3-sidebar w3-bar-block w3-theme-d4" style="width:200px">
         <div class="w3-bar-item w3-btn">
-            <a href="/" class="fa fa-chevron-circle-left w3-xxlarge" style="text-decoration:none;"></a>
+            <a href="/" class="brand" aria-label="TasQana home">Tas<span>Q</span>ana</a>
         </div>
         <div id="menu-users" class="w3-bar-item w3-btn">Users</div>
         <div id="menu-sessions" class="w3-bar-item w3-btn">Sessions</div>
         <div id="menu-todos" class="w3-bar-item w3-btn">ToDo's</div>
         <div id="menu-messages" class="w3-bar-item w3-btn">Messages</div>
     </div>
-    <div style="margin-left:200px" class="w3-padding">
+    <div style="margin-left:200px" class="w3-padding admin-content">
+        <p class="eyebrow">WORKSPACE MANAGEMENT</p>
+        <h1>Admin panel</h1>
         <table id="table" class="w3-table w3-bordered w3-border w3-hoverable" style="width:100%;">
         </table>
     </div>
